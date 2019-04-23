@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">RSSFA</string>
+    <string name="navigation_drawer_open">Open navigaton drawer</string>
+    <string name="navigation_drawer_close">Close navigaton drawer</string>
+</resources>
