@@ -1,5 +1,12 @@
 <resources>
-    <string name="app_name">RSSFA</string>
-    <string name="navigation_drawer_open">Open navigaton drawer</string>
-    <string name="navigation_drawer_close">Close navigaton drawer</string>
+    <string name="app_name">RSSKEE</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
+    <string name="nav_home">Home</string>
+    <string name="nav_favorite">Favorite</string>
+    <string name="nav_saved_for_later">Saved For Later</string>
+    <string name="rss_feed_picture">RSS Feed Picture</string>
+    <string name="favorite_this_article">Favorite this article</string>
+    <string name="save_this_article_for_later">Save this article for later</string>
 </resources>

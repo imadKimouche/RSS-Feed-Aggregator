@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/ab_favorite"
+        android:icon="@drawable/ic_favorite"
+        android:title="@string/favorite_this_article"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/ab_save"
+        android:icon="@drawable/ic_bookmark"
+        android:title="@string/save_this_article_for_later"
+        app:showAsAction="ifRoom" />
+</menu>
