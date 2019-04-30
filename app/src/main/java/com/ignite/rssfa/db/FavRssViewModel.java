@@ -8,6 +8,7 @@ import android.util.Log;
 import com.ignite.rssfa.db.entity.RSS;
 
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class FavRssViewModel extends AndroidViewModel {
 
@@ -25,7 +26,27 @@ public class FavRssViewModel extends AndroidViewModel {
         return mFavRssList;
     }
 
-    public void insert(RSS rss) {
-        mRepository.insert(rss);
+    public Boolean insert(RSS rss) {
+        Boolean result = false;
+        try {
+            result = mRepository.insert(rss);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public Boolean exists(RSS rss) {
+        Boolean result = false;
+        try {
+            result = mRepository.RssFavExists(rss);
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

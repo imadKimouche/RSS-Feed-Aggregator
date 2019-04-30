@@ -8,7 +8,9 @@ import android.util.Log;
 import com.ignite.rssfa.db.AppDatabase;
 import com.ignite.rssfa.db.dao.FavoriteRssDao;
 import com.ignite.rssfa.db.entity.RSS;
+
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class FavRssRepository {
     private FavoriteRssDao mFavRssDao;
@@ -24,11 +26,13 @@ public class FavRssRepository {
         return mFavRssList;
     }
 
-    public void insert (RSS rss) {
-        new insertAsyncTask(mFavRssDao).execute(rss);
+    public Boolean insert(RSS rss) throws ExecutionException, InterruptedException {
+        AsyncTask<RSS, Void, Boolean> task = new insertAsyncTask(mFavRssDao).execute(rss);
+        Boolean result = task.get();
+        return result;
     }
 
-    private static class insertAsyncTask extends AsyncTask<RSS, Void, Void> {
+    private static class insertAsyncTask extends AsyncTask<RSS, Void, Boolean> {
 
         private FavoriteRssDao mAsyncTaskDao;
 
@@ -37,9 +41,38 @@ public class FavRssRepository {
         }
 
         @Override
-        protected Void doInBackground(final RSS... params) {
-            mAsyncTaskDao.insert(params[0]);
-            return null;
+        protected Boolean doInBackground(final RSS... params) {
+            if (mAsyncTaskDao.findByTitle(params[0].getTitle()) != null) {
+                mAsyncTaskDao.deleteByTitle(params[0].getTitle());
+                return false;
+            } else
+                mAsyncTaskDao.insert(params[0]);
+            return true;
+        }
+
+/*        @Override // Maybe use next
+        protected void onPostExecute(Boolean result) {
+            Log.i("DEBUG", result ? "Rss inserted" : "Rss Not inserted");
+        }*/
+    }
+
+    public Boolean RssFavExists(RSS rss) throws ExecutionException, InterruptedException {
+        AsyncTask<RSS, Void, Boolean> task = new existsAsyncTask(mFavRssDao).execute(rss);
+        Boolean result = task.get();
+        return result;
+    }
+
+    private static class existsAsyncTask extends AsyncTask<RSS, Void, Boolean> {
+
+        private FavoriteRssDao mAsyncTaskDao;
+
+        existsAsyncTask(FavoriteRssDao dao) {
+            mAsyncTaskDao = dao;
+        }
+
+        @Override
+        protected Boolean doInBackground(final RSS... params) {
+            return mAsyncTaskDao.findByTitle(params[0].getTitle()) != null;
         }
     }
 }

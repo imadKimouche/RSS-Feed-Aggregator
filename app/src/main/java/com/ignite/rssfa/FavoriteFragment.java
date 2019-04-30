@@ -35,11 +35,10 @@ public class FavoriteFragment extends Fragment {
         mFavRssViewModel.getAllFavRss().observe(this, new Observer<List<RSS>>() {
             @Override
             public void onChanged(@Nullable List<RSS> rssList) {
-                rssFavoriteList = rssList;
-                mFavoriteList.invalidateViews();
-                for (RSS item: rssFavoriteList) {
-                    Log.i("test", item.toString());
-                }
+
+                rssFavoriteList.clear();
+                rssFavoriteList.addAll(rssList);
+                adapter.notifyDataSetChanged();
             }
         });
 

@@ -17,7 +17,7 @@ public interface FavoriteRssDao {
     LiveData<List<RSS>> getAll();
 
     @Query("SELECT * FROM favoriteRss where title LIKE  :title")
-    RSS findByName(String title);
+    RSS findByTitle(String title);
 
     @Query("SELECT COUNT(*) from favoriteRss")
     int countUsers();
@@ -30,4 +30,7 @@ public interface FavoriteRssDao {
 
     @Delete
     void delete(RSS rssFavorite);
+
+    @Query("DELETE FROM favoriteRss WHERE title = :title")
+    void deleteByTitle(String title);
 }
