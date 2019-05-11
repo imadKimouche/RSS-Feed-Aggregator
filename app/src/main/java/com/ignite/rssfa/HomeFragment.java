@@ -29,9 +29,6 @@ public class HomeFragment extends Fragment {
 
         mFeedList = view.findViewById(R.id.feedList);
 
-        Log.i("START", "APPLICATION START");
-        FeedManager.getTopics();
-
         rssList.add(new RSS("picture", "RSS1", "rss feed text"));
         rssList.add(new RSS("picture", "RSS2", "rss feed text"));
         rssList.add(new RSS("picture", "RSS3", "rss feed text"));
