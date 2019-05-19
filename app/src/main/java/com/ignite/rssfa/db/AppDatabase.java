@@ -4,17 +4,23 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
+import com.ignite.rssfa.Converters;
+import com.ignite.rssfa.db.dao.MyFeedsDao;
 import com.ignite.rssfa.db.entity.RSS;
+import com.ignite.rssfa.db.entity.Feed;
 
-@Database(entities = {RSS.class}, version = 1)
+@Database(entities = {RSS.class, Feed.class}, version = 1)
+@TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase sInstance;
     public abstract com.ignite.rssfa.db.dao.FavoriteRssDao FavRssDao();
+    public abstract MyFeedsDao MyFeedsDao();
     public static final String DATABASE_NAME = "rsskee-db";
 
     public static AppDatabase getInstance(Context context) {

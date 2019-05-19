@@ -2,6 +2,9 @@ package com.ignite.rssfa;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,9 +18,11 @@ import android.widget.Toast;
 import com.ignite.rssfa.db.FavRssViewModel;
 import com.ignite.rssfa.db.entity.RSS;
 
+import java.io.InputStream;
+
 public class RSSDetail extends AppCompatActivity {
 
-    private RSS mRss;
+    private RsskeeArticle mArticle;
     FavRssViewModel mFavRssViewModel;
 
     @Override
@@ -25,14 +30,17 @@ public class RSSDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_rssdetail);
         Intent intent = getIntent();
-        mRss = intent.getParcelableExtra("rss");
-        setTitle(mRss.getTitle());
+        mArticle = intent.getParcelableExtra("article");
+        setTitle(mArticle.getTitle());
         ImageView mPicture = findViewById(R.id.picture);
         TextView mTitle = findViewById(R.id.title);
         TextView mText = findViewById(R.id.text);
-        mTitle.setText(mRss.getTitle());
-        mText.setText(mRss.getText());
-        mFavRssViewModel = ViewModelProviders.of(this).get(FavRssViewModel.class);
+        mTitle.setText(mArticle.getTitle().equals("") ? "No title found" : mArticle.getTitle());
+        mText.setText(mArticle.getContent().equals("") ? "No content found" : mArticle.getContent());
+        if (!mArticle.getImage().equals("")) {
+            new DownloadImageTask(mPicture).execute(mArticle.getImage());
+        }
+        //mFavRssViewModel = ViewModelProviders.of(this).get(FavRssViewModel.class);
     }
 
     @Override
@@ -40,10 +48,10 @@ public class RSSDetail extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.rss_detail_action_bar, menu);
         MenuItem item = menu.getItem(0);
-        item.setIcon(mFavRssViewModel.exists(mRss) ? R.drawable.ic_favorite_enabled : R.drawable.ic_favorite);
+        //item.setIcon(mFavRssViewModel.exists(mRss) ? R.drawable.ic_favorite_enabled : R.drawable.ic_favorite);
         return true;
     }
-
+/*
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -58,5 +66,31 @@ public class RSSDetail extends AppCompatActivity {
             }
         }
         return true;
+    }*/
+
+
+    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView bmImage;
+
+        public DownloadImageTask(ImageView bmImage) {
+            this.bmImage = bmImage;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            Bitmap mIcon11 = null;
+            try {
+                InputStream in = new java.net.URL(urldisplay).openStream();
+                mIcon11 = BitmapFactory.decodeStream(in);
+            } catch (Exception e) {
+                Log.e("Error", e.getMessage());
+                e.printStackTrace();
+            }
+            return mIcon11;
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            bmImage.setImageBitmap(result);
+        }
     }
 }

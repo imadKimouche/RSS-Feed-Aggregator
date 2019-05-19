@@ -9,8 +9,12 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.ExpandableListView;
 
 import com.ignite.rssfa.db.AppDatabase;
+
+import java.util.HashMap;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -44,6 +48,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         switch (menuItem.getItemId()) {
             case R.id.nav_home:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+                break;
+            case R.id.nav_myFeeds:
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MyFeedsFragment()).commit();
                 break;
             case R.id.nav_topics:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TopicsFragment()).commit();

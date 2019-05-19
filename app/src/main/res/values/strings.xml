@@ -32,4 +32,8 @@
     <string name="sign_out">Sign Out</string>
     <string name="topics">Topics</string>
     <string name="discover">Discover</string>
+    <string name="facebook_app_id">2408429812767101</string>
+    <string name="fb_login_protocol_scheme">fb2408429812767101</string>
+    <string name="my_feeds">My Feeds</string>
+
 </resources>

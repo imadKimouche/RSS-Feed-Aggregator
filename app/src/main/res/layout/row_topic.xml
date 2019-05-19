@@ -17,24 +17,24 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/topicImage"
+                android:id="@+id/image"
                 android:layout_width="80dp"
                 android:layout_height="120dp"
                 android:src="@mipmap/ic_launcher"/>
 
             <TextView
-                android:id="@+id/topicTitle"
+                android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/topicImage"
-                android:layout_alignTop="@id/topicImage"
-                android:layout_alignRight="@id/topicImage"
-                android:layout_alignBottom="@id/topicImage"
+                android:layout_alignLeft="@id/image"
+                android:layout_alignTop="@id/image"
+                android:layout_alignRight="@id/image"
+                android:layout_alignBottom="@id/image"
                 android:layout_margin="1dp"
                 android:gravity="center"
-                android:textColor="#000000"
-                android:layout_alignStart="@id/topicImage"
-                android:layout_alignEnd="@id/topicImage" />
+                android:textColor="#FFFFFF"
+                android:layout_alignStart="@id/image"
+                android:layout_alignEnd="@id/image" />
 
         </RelativeLayout>
 
