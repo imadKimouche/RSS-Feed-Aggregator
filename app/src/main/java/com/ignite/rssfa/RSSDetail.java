@@ -37,8 +37,10 @@ public class RSSDetail extends AppCompatActivity {
         TextView mText = findViewById(R.id.text);
         mTitle.setText(mArticle.getTitle().equals("") ? "No title found" : mArticle.getTitle());
         mText.setText(mArticle.getContent().equals("") ? "No content found" : mArticle.getContent());
-        if (!mArticle.getImage().equals("")) {
-            new DownloadImageTask(mPicture).execute(mArticle.getImage());
+        if (mArticle.getImage() != null) {
+            if (mArticle.getImage().startsWith("http")) {
+                new DownloadImageTask(mPicture).execute(mArticle.getImage());
+            }
         }
         //mFavRssViewModel = ViewModelProviders.of(this).get(FavRssViewModel.class);
     }

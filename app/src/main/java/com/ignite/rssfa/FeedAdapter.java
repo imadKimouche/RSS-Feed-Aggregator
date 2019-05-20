@@ -42,7 +42,7 @@ public class FeedAdapter extends ArrayAdapter<Feed> {
             convertView.setTag(viewHolder);
         }
 
-        Feed feed = getItem(position);
+        Feed feed = mFeedList.get(position);
         if (feed != null) {
             viewHolder.title.setText(feed.getTitle());
             viewHolder.description.setText(feed.getDescription());

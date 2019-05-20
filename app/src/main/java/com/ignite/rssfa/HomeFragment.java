@@ -7,23 +7,23 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.HorizontalScrollView;
 import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.ignite.rssfa.db.entity.RSS;
+import com.ignite.rssfa.db.entity.Feed;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -42,8 +42,30 @@ public class HomeFragment extends Fragment {
         RecyclerView rv = view.findViewById(R.id.topicsList);
         rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
         mTopics = Utils.fillTopics();
-        TopicsAdapter adapter = new TopicsAdapter(mTopics);
-        rv.setAdapter(adapter);
+        TopicsAdapter adapterTopic = new TopicsAdapter(getActivity(), mTopics);
+        rv.setAdapter(adapterTopic);
+        rv.setHasFixedSize(true);
+        rv.setItemViewCacheSize(20);
+        rv.setDrawingCacheEnabled(true);
+        rv.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        adapterTopic.setOnItemClickListener(new TopicsAdapter.ClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                Topic topic = mTopics.get(position);
+                List<Feed> feeds = topic.getmFeeds();
+                Bundle bundle = new Bundle();
+                bundle.putParcelableArrayList("feeds", new ArrayList<>(feeds));
+                MyFeedsFragment myFeedsFragment = new MyFeedsFragment();
+                myFeedsFragment.setArguments(bundle);
+
+                Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myFeedsFragment).commit();
+            }
+
+            @Override
+            public void onItemLongClick(int position, View v) {
+
+            }
+        });
 
         HttpRequest.getRandomArticles(new AsyncHttpResponseHandler() {
             @Override
@@ -101,5 +123,10 @@ public class HomeFragment extends Fragment {
             final int childIndex = pos - firstListItemPosition;
             return listView.getChildAt(childIndex);
         }
+    }
+
+    private void openFeedDetail(com.ignite.rssfa.db.entity.Feed feed) {
+        Intent intent = new Intent(getActivity(), MyFeedsFragment.class);
+        startActivity(intent);
     }
 }

@@ -295,13 +295,9 @@ public class MyAccountFragment extends Fragment {
         if (account != null) {
             updateUI(account.getEmail(), true);
         } else if (mSession.isLoggedIn()) {
-//            updateUI(mSession.getUserDetails().get("userName"), true);
+            updateUI(mSession.getUserDetails().get(SessionManager.KEY_USERNAME), true);
         } else {
-            if (mSession.isLoggedIn()) {
-                updateUI("", true);
-            } else {
-                updateUI("", false);
-            }
+            updateUI("", false);
         }
     }
 }

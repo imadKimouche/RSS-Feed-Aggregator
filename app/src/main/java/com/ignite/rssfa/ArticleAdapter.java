@@ -47,8 +47,10 @@ public class ArticleAdapter extends ArrayAdapter<RsskeeArticle> {
         RsskeeArticle article = getItem(position);
         viewHolder.title.setText(article.getTitle());
         viewHolder.description.setText(article.getDescription());
-        if (!article.getImage().equals("")) {
-            new DownloadImageTask(viewHolder.picture).execute(article.getImage());
+        if (article.getImage() != null) {
+            if (article.getImage().startsWith("http")) {
+                new DownloadImageTask(viewHolder.picture).execute(article.getImage());
+            }
         }
         return convertView;
     }

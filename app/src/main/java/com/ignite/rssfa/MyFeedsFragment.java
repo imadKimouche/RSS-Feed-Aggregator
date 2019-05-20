@@ -1,7 +1,6 @@
 package com.ignite.rssfa;
 
 import android.app.AlertDialog;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,10 +20,12 @@ import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.ignite.rssfa.db.FavRssViewModel;
 import com.ignite.rssfa.db.MyFeedsViewModel;
 import com.ignite.rssfa.db.entity.Feed;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.prof.rssparser.Article;
+import com.prof.rssparser.OnTaskCompleted;
+import com.prof.rssparser.Parser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -34,10 +35,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
-
-import com.prof.rssparser.Article;
-import com.prof.rssparser.OnTaskCompleted;
-import com.prof.rssparser.Parser;
 
 public class MyFeedsFragment extends Fragment {
 
@@ -54,56 +51,63 @@ public class MyFeedsFragment extends Fragment {
         FeedAdapter adapter = new FeedAdapter(getActivity(), feedList);
         mFeedList.setAdapter(adapter);
         mAddFeed = view.findViewById(R.id.add_feed);
-
-        MyFeedsViewModel mFeedsViewModel = ViewModelProviders.of(this).get(MyFeedsViewModel.class);
         SessionManager sessionManager = new SessionManager(getActivity());
-        if (sessionManager.checkLogin()) {
-            String token = sessionManager.getUserDetails().get(SessionManager.KEY_access_token);
-            HttpRequest.getAllFeeds(token, new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    try {
-                        JSONArray feeds = new JSONArray(new String(responseBody));
-                        for (int i = 0; i < feeds.length(); i++) {
-                            JSONObject feedObj = feeds.getJSONObject(i);
-                            Feed feed = new Feed(feedObj.get("title").toString(), feedObj.get("link").toString(),
-                                    feedObj.get("description").toString(), feedObj.get("language").toString(),
-                                    feedObj.get("pubDate").toString(), feedObj.get("rssURL").toString(), "", new ArrayList<>());
 
-                            Parser parser = new Parser();
-                            parser.onFinish(new OnTaskCompleted() {
+        if (this.getArguments() != null && this.getArguments().getParcelableArrayList("feeds") != null) {
+            feedList = this.getArguments().getParcelableArrayList("feeds");
+            adapter.setmFeedList(feedList);
+            adapter.notifyDataSetChanged();
+            mAddFeed.hide();
+        } else {
+            mAddFeed.show();
+            MyFeedsViewModel mFeedsViewModel = ViewModelProviders.of(this).get(MyFeedsViewModel.class);
+            if (sessionManager.checkLogin()) {
+                String token = sessionManager.getUserDetails().get(SessionManager.KEY_access_token);
+                HttpRequest.getAllFeeds(token, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        try {
+                            JSONArray feeds = new JSONArray(new String(responseBody));
+                            for (int i = 0; i < feeds.length(); i++) {
+                                JSONObject feedObj = feeds.getJSONObject(i);
+                                Feed feed = new Feed(feedObj.get("title").toString(), feedObj.get("link").toString(),
+                                        feedObj.get("description").toString(), feedObj.get("language").toString(),
+                                        feedObj.get("pubDate").toString(), feedObj.get("rssURL").toString(), "", new ArrayList<>());
 
-                                @Override
-                                public void onTaskCompleted(List<Article> list) {
-                                    feed.setImage(list.get(0).getImage());
-                                    feed.setArticlesFromParser(list);
-                                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            adapter.addFeed(feed);
-                                            adapter.notifyDataSetChanged();
-                                        }
-                                    });
-                                }
+                                Parser parser = new Parser();
+                                parser.onFinish(new OnTaskCompleted() {
 
-                                //what to do in case of error
-                                @Override
-                                public void onError(Exception e) {
-                                    Log.i("error parsing feed", e.getMessage());
-                                }
-                            });
-                            parser.execute(feed.getRssUrl());
+                                    @Override
+                                    public void onTaskCompleted(List<Article> list) {
+                                        feed.setImage(list.get(0).getImage());
+                                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                adapter.addFeed(feed);
+                                                adapter.notifyDataSetChanged();
+                                            }
+                                        });
+                                    }
+
+                                    //what to do in case of error
+                                    @Override
+                                    public void onError(Exception e) {
+                                        Log.i("error parsing feed", e.getMessage());
+                                    }
+                                });
+                                parser.execute(feed.getRssUrl());
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
                     }
-                }
 
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
 
-                }
-            });
+                    }
+                });
+            }
         }
 
         /*mFeedsViewModel.getAllFeeds().observe(this, new Observer<List<Feed>>() {
@@ -123,7 +127,22 @@ public class MyFeedsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view,
                                     final int position, long id) {
                 Feed feed = feedList.get(position);
-                openFeedDetail(feed);
+                feed.setArticles(new ArrayList<>());
+                Parser parser = new Parser();
+                parser.onFinish(new OnTaskCompleted() {
+
+                    @Override
+                    public void onTaskCompleted(List<Article> list) {
+                        feed.setArticlesFromParser(list);
+                        openFeedDetail(feed);
+                    }
+
+                    @Override
+                    public void onError(Exception e) {
+                        Log.i("error parsing feed", e.getMessage());
+                    }
+                });
+                parser.execute(feed.getRssUrl());
             }
         });
 

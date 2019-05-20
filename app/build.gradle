@@ -55,4 +55,5 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:16.0.1'
     implementation 'com.facebook.android:facebook-login:[5,6)'
     implementation 'com.prof.rssparser:rssparser:2.0.4'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }

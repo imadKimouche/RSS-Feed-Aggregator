@@ -1,25 +1,26 @@
 package com.ignite.rssfa;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.InputStream;
+import com.squareup.picasso.Picasso;
+
 import java.util.List;
 
 public class TopicsAdapter extends RecyclerView.Adapter<TopicsAdapter.TopicHolder> {
 
     private List<Topic> mTopics;
+    private static ClickListener clickListener;
+    private Context mContext;
 
-    public TopicsAdapter(List<Topic> topics) {
+    public TopicsAdapter(Context context, List<Topic> topics) {
+        mContext = context;
         mTopics = topics;
     }
 
@@ -29,19 +30,19 @@ public class TopicsAdapter extends RecyclerView.Adapter<TopicsAdapter.TopicHolde
     public TopicHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.row_topic, null);
-        TopicHolder topicHolder = new TopicHolder(v);
-        return topicHolder;
+        return new TopicHolder(v);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TopicHolder topicHolder, int i) {
         Topic topic = mTopics.get(i);
         topicHolder.title.setText(topic.getTitle());
-        if (topic.getImage().startsWith("http")) {
-            new DownloadImageTask(topicHolder.image).execute(topic.getImage());
-        } else {
-            topicHolder.image.setImageResource(Integer.parseInt(topic.getImage()));
-        }
+        int productImageId = topicHolder.image.getResources().getIdentifier(topic.getImage(), "drawable", mContext.getPackageName());
+        Picasso.get()
+                .load(productImageId)
+                .fit()
+                .centerCrop()
+                .into(topicHolder.image);
     }
 
     @Override
@@ -57,7 +58,17 @@ public class TopicsAdapter extends RecyclerView.Adapter<TopicsAdapter.TopicHolde
         this.mTopics = mTopics;
     }
 
-    public static class TopicHolder extends RecyclerView.ViewHolder {
+    public void setOnItemClickListener(ClickListener clickListener) {
+        TopicsAdapter.clickListener = clickListener;
+    }
+
+    public interface ClickListener {
+        void onItemClick(int position, View v);
+
+        void onItemLongClick(int position, View v);
+    }
+
+    public static class TopicHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         protected ImageView image;
         protected TextView title;
 
@@ -65,31 +76,19 @@ public class TopicsAdapter extends RecyclerView.Adapter<TopicsAdapter.TopicHolde
             super(v);
             this.image = v.findViewById(R.id.image);
             this.title = v.findViewById(R.id.title);
-        }
-    }
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
+            itemView.setOnClickListener(this);
+            itemView.setOnLongClickListener(this);
         }
 
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
+        @Override
+        public void onClick(View v) {
+            clickListener.onItemClick(getAdapterPosition(), v);
         }
 
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
+        @Override
+        public boolean onLongClick(View v) {
+            clickListener.onItemLongClick(getAdapterPosition(), v);
+            return false;
         }
     }
 }

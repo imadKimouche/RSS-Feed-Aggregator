@@ -1,8 +1,10 @@
 package com.ignite.rssfa;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.widget.Toast;
+
+import com.ignite.rssfa.db.entity.Feed;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,14 +20,23 @@ public class Utils {
 
     public static List<Topic> fillTopics() {
         List<Topic> topics = new ArrayList<>();
-        topics.add(new Topic("News", Integer.toString(R.drawable.ic_add), new ArrayList<>()));
-        topics.add(new Topic("Science", "https://images.unsplash.com/photo-1486825586573-7131f7991bdd?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80", new ArrayList<>()));
-        topics.add(new Topic("Health", "https://images.unsplash.com/photo-1485527172732-c00ba1bf8929?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80", new ArrayList<>()));
-        topics.add(new Topic("Technology", "https://images.unsplash.com/photo-1478358161113-b0e11994a36b?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=634&q=80", new ArrayList<>()));
-        topics.add(new Topic("Environment", "https://images.unsplash.com/photo-1420666906485-bd11880afb89?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1674&q=80", new ArrayList<>()));
-        topics.add(new Topic("Society", "https://images.unsplash.com/photo-1547944569-e62f69839c6e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=658&q=80", new ArrayList<>()));
-        topics.add(new Topic("Strange", "https://images.unsplash.com/photo-1549773899-4720ed8c0c93?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=637&q=80", new ArrayList<>()));
-        topics.add(new Topic("All", "https://images.unsplash.com/photo-1555679427-1f6dfcce943b?ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80", new ArrayList<>()));
+        Feed feed = new Feed("Google News", "", "", "en", "", "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx1YlY4U0FtVnVHZ0pWVXlnQVAB?hl=en-US&gl=US&ceid=US:en", "https://upload.wikimedia.org/wikipedia/commons/thumb/0/0b/Google_News_icon.png/221px-Google_News_icon.png");
+        Feed feed1 = new Feed("Reddit - World News", "", "", "en", "", "https://www.reddit.com/r/worldnews/.rss", "https://www.redditstatic.com/new-icon.png");
+        Feed feed2 = new Feed(" The New York Times News", "", "", "en", "", "https://www.nytimes.com/svc/collections/v1/publish/https://www.nytimes.com/section/world/rss.xml", "https://mir-s3-cdn-cf.behance.net/project_modules/disp/328e7c8732133.560c2513bab89.gif");
+
+        topics.add(new Topic("News", Integer.toString(R.drawable.news), new ArrayList<Feed>() {{
+            add(feed);
+            add(feed1);
+            add(feed2);
+        }}));
+        topics.add(new Topic("Science", Integer.toString(R.drawable.science), new ArrayList<>()));
+        topics.add(new Topic("Health", Integer.toString(R.drawable.health), new ArrayList<>()));
+        topics.add(new Topic("Technology", Integer.toString(R.drawable.tek), new ArrayList<>()));
+        topics.add(new Topic("Environment", Integer.toString(R.drawable.env), new ArrayList<>()));
+        topics.add(new Topic("Society", Integer.toString(R.drawable.soc), new ArrayList<>()));
+        topics.add(new Topic("Strange", Integer.toString(R.drawable.strange), new ArrayList<>()));
+        topics.add(new Topic("All", Integer.toString(R.drawable.solid), new ArrayList<>()));
+
         return topics;
     }
 }
