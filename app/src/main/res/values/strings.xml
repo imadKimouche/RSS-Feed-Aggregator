@@ -2,41 +2,25 @@
     <string name="app_name">RSSKEE</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
     <string name="nav_home">Home</string>
     <string name="nav_favorite">Favorites</string>
     <string name="nav_saved_for_later">Saved For Later</string>
-    <string name="rss_feed_picture">RSS Feed Picture</string>
+    <string name="rss_feed_picture" translatable="false">RSS Feed Picture</string>
     <string name="favorite_this_article">Favorite this article</string>
     <string name="save_this_article_for_later">Save this article for later</string>
-    <string name="user_icon">user icon</string>
-    <string name="password_icon">password icon</string>
-    <string name="title_activity_login">Sign in</string>
-    <string name="prompt_password">Password</string>
-    <string name="action_sign_in">Sign in or register</string>
-    <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome !"</string>
-    <string name="invalid_username">Not a valid username</string>
-    <string name="invalid_password">Password must be >5 characters</string>
-    <string name="login_failed">"Login failed"</string>
     <string name="my_account">My Account</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="login">Login</string>
-    <string name="sign_in_with_google">Sign in with google</string>
-    <string name="sign_in_with_facebook">Sign in with facebook</string>
     <string name="sign_in">Sign in</string>
-    <string name="server_client_id">297262485743-0lhnb7fadne5t4248njnregoud8uaed6.apps.googleusercontent.com</string>
+    <string name="server_client_id" translatable="false">297262485743-0lhnb7fadne5t4248njnregoud8uaed6.apps.googleusercontent.com</string>
     <string name="sign_out">Sign Out</string>
     <string name="discover">Discover</string>
-    <string name="facebook_app_id">2408429812767101</string>
-    <string name="fb_login_protocol_scheme">fb2408429812767101</string>
+    <string name="facebook_app_id" translatable="false">2408429812767101</string>
+    <string name="fb_login_protocol_scheme" translatable="false">fb2408429812767101</string>
     <string name="my_feeds">My Feeds</string>
     <string name="featured_topics">Featured Topics</string>
     <string name="featured_articles">Featured Articles</string>
     <string name="topics">Topics</string>
-    <string name="prompt_email">Email</string>
     <string name="username">Username</string>
     <string name="email">Email</string>
     <string name="username_email">Username / Email</string>
@@ -46,12 +30,15 @@
     <string name="are_you_sure_you_want_to_delete">Are you sure you want to delete</string>
     <string name="cancel">Cancel</string>
     <string name="add_rss_feed_link">Add RSS Feed Link</string>
-    <string name="adding_rss_feed">Adding RSS Feed...</string>
+    <string name="adding_rss_feed">Adding RSS Feed…</string>
     <string name="rss_feed_added">RSS feed added</string>
     <string name="failed_to_add_link">Failed to add link</string>
     <string name="login_first">Login first(Menu -> My Account)</string>
     <string name="disconnected">Disconnected</string>
     <string name="feed_has_been_removed">Feed has been removed</string>
     <string name="share_via">Share via</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="pass_conf_missmatch">Password and confirmation mismatch</string>
+    <string name="category_name">Category name</string>
 
 </resources>

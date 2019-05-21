@@ -73,6 +73,7 @@
                     android:layout_height="wrap_content"
                     android:hint="@string/username_email"
                     android:inputType="textEmailAddress"
+                    android:importantForAutofill="no"
                     android:theme="@style/EditTextTheme" />
             </android.support.design.widget.TextInputLayout>
 
@@ -105,7 +106,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:backgroundTint="@color/colorSecondaryDark"
+                app:backgroundTint="@color/colorSecondaryDark"
                 android:padding="12dp"
                 android:text="@string/sign_in" />
 
@@ -129,7 +130,7 @@
             android:id="@+id/signoutButton"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorSecondaryDark"
+            app:backgroundTint="@color/colorSecondaryDark"
             android:text="@string/sign_out" />
     </LinearLayout>
 </ScrollView>

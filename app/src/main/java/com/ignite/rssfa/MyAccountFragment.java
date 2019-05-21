@@ -350,15 +350,15 @@ public class MyAccountFragment extends Fragment {
         final TextView passwordText = new TextView(activity);
         final TextView confirmText = new TextView(activity);
         final LinearLayout layout = new LinearLayout(activity);
-        passwordText.setText("Passwrod");
-        confirmText.setText("Confirm Password");
-        usernameText.setText("Username: " + username);
-        emailText.setText("Email: " + email);
+        passwordText.setText(getString(R.string.password));
+        confirmText.setText(getString(R.string.confirm_password));
+        usernameText.setText(String.format("%s %s", getString(R.string.username), username));
+        emailText.setText(String.format("%s %s", getString(R.string.email), email));
         layout.setOrientation(LinearLayout.VERTICAL);
 
         inputPasswrod.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
         inputConfirm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        error.setText("Passwor and confirmation mismatch");
+        error.setText(getString(R.string.pass_conf_missmatch));
         error.setTextColor(getResources().getColor(R.color.colorError));
         error.setVisibility(View.GONE);
         layout.addView(usernameText);

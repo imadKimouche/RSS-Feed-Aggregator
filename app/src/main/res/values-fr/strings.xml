@@ -39,4 +39,13 @@
     <string name="disconnected">Hors ligne</string>
     <string name="feed_has_been_removed">Flux a été supprimé</string>
     <string name="share_via">Partager via</string>
+    <string name="action_sign_in">Connexion ou Inscription</string>
+    <string name="action_sign_in_short">Se connecter</string>
+    <string name="invalid_password">Le mot de passe doit comporter plus de 5 caractères.</string>
+    <string name="invalid_username">Nom d\'utilisateur non valide</string>
+    <string name="navigation_drawer_close">"Fermer le tiroir de navigation "</string>
+    <string name="navigation_drawer_open">Ouvrir le tiroir de navigation</string>
+    <string name="confirm_password">Confirmer le mot de passe</string>
+    <string name="pass_conf_missmatch">Secret et confirmation différent</string>
+    <string name="category_name">Nom de la catégorie</string>
 </resources>

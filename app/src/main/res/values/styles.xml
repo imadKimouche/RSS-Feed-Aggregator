@@ -25,8 +25,9 @@
         <item name="colorControlHighlight">@color/colorSecondaryDark</item>
     </style>
 
-    <style name="AlertDialogCustom" parent="@android:style/Theme.Dialog">
-        <item name="android:textColor">@color/black</item>
-        <item name="android:background">@color/colorPrimary</item>
+    <style name="MyTheme" parent="android:Theme">
+        <item name="android:windowBackground">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
     </style>
 </resources>

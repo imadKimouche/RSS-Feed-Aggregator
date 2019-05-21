@@ -33,7 +33,9 @@
             android:layout_toRightOf="@+id/cv"
             android:textColor="@android:color/black"
             android:textStyle="bold"
-            tools:text="RSS_title" />
+            tools:text="RSS_title"
+            android:layout_marginStart="10dp"
+            android:layout_toEndOf="@+id/cv" />
 
         <TextView
             android:id="@+id/text"
@@ -42,7 +44,8 @@
             android:layout_below="@+id/title"
             android:layout_alignLeft="@+id/title"
             android:textColor="@android:color/black"
-            tools:text="RSS_text" />
+            tools:text="RSS_text"
+            android:layout_alignStart="@+id/title" />
 
     </RelativeLayout>
 

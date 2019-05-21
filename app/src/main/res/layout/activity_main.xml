@@ -18,17 +18,16 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorPrimary"
-            android:elevation="4dp"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
             <Button
                 android:layout_width="25dp"
                 android:layout_height="25dp"
-                android:layout_gravity="right"
-                android:backgroundTint="@color/colorSecondaryDark"
+                android:layout_gravity="end"
                 android:layout_marginRight="10dp"
-                android:background="@drawable/ic_translate"/>
+                android:background="@drawable/ic_translate"
+                android:layout_marginEnd="10dp" />
         </android.support.v7.widget.Toolbar>
 
         <FrameLayout

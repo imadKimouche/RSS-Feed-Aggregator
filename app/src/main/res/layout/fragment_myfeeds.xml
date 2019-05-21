@@ -1,13 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/content_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
         <ListView
             android:id="@+id/feedList"
@@ -17,12 +13,11 @@
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/add_feed"
-            android:backgroundTint="@color/colorSecondaryDark"
+            app:backgroundTint="@color/colorSecondaryDark"
             app:borderWidth="0dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:srcCompat="@drawable/ic_add"
             android:layout_gravity="end|bottom"
             android:layout_margin="14dp"/>
-    </FrameLayout>
-</RelativeLayout>
+</FrameLayout>

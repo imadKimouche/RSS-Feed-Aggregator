@@ -6,12 +6,12 @@
         android:id="@+id/ab_darkMode"
         android:icon="@drawable/ic_darkmode"
         android:title="@string/save_this_article_for_later"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/ab_favorite"
         android:icon="@drawable/ic_favorite"
         android:title="@string/favorite_this_article"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/ab_save"
@@ -23,5 +23,5 @@
         android:id="@+id/ab_share"
         android:icon="@drawable/ic_share"
         android:title="@string/save_this_article_for_later"
-        app:showAsAction="always" />
+        app:showAsAction="ifRoom" />
 </menu>

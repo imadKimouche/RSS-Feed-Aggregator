@@ -49,7 +49,7 @@ public class ArticleAdapter extends ArrayAdapter<RsskeeArticle> {
         viewHolder.description.setText(article.getDescription());
         if (article.getImage() != null) {
             if (article.getImage().startsWith("http")) {
-                new DownloadImageTask(viewHolder.picture).execute(article.getImage());
+                new Utils.DownloadImageTask(viewHolder.picture).execute(article.getImage());
             }
         }
         return convertView;
@@ -57,7 +57,7 @@ public class ArticleAdapter extends ArrayAdapter<RsskeeArticle> {
 
     private class ArticleViewHolder {
         public TextView title;
-        public TextView description;
+        private TextView description;
         public TextView content;
         public TextView author;
         public ImageView picture;
@@ -66,32 +66,5 @@ public class ArticleAdapter extends ArrayAdapter<RsskeeArticle> {
     @Override
     public int getCount() {
         return mArticleList != null ? mArticleList.size() : 0;
-    }
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inSampleSize = 2;
-                mIcon11 = BitmapFactory.decodeStream(in, null, options);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
     }
 }

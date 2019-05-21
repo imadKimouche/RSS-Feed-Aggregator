@@ -1,6 +1,8 @@
 package com.ignite.rssfa;
 
 import android.content.res.Configuration;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -28,7 +30,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private DrawerLayout drawer;
     private TextView mUserStatus;
-    private ImageView mStatusIcon;
     private SessionManager mSession;
 
     @Override
@@ -36,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mSession= new SessionManager(this);
+        mSession = new SessionManager(this);
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -44,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         View headerLayout = navigationView.getHeaderView(0);
 
         mUserStatus = headerLayout.findViewById(R.id.userStatus);
-        mStatusIcon = headerLayout.findViewById(R.id.statusIcon);
 
 
         Toolbar toolbar = findViewById(R.id.toolBar);
@@ -76,9 +76,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             case R.id.nav_myFeeds:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new MyFeedsFragment()).commit();
                 break;
-            case R.id.nav_topics:
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new TopicsFragment()).commit();
-                break;
             case R.id.nav_favorite:
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new FavoriteFragment()).commit();
                 break;
@@ -105,6 +102,10 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void updateUserStatus() {
         boolean logged = mSession.isLoggedIn();
         mUserStatus.setText(logged ? mSession.getUserDetails().get(SessionManager.KEY_USERNAME) : getResources().getString(R.string.disconnected));
-        mStatusIcon.setColorFilter(ContextCompat.getColor(this, logged ? R.color.colorDarkGreen : R.color.colorOrange), android.graphics.PorterDuff.Mode.SRC_IN);
+        Drawable drawable = getResources().getDrawable(R.drawable.ic_status).mutate();
+        drawable.setColorFilter(getResources().getColor(logged ? R.color.colorDarkGreen : R.color.colorOrange), PorterDuff.Mode.SRC_ATOP);
+
+        mUserStatus.setCompoundDrawables(null, drawable, null, null);
+
     }
 }

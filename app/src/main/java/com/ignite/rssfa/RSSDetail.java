@@ -45,7 +45,7 @@ public class RSSDetail extends AppCompatActivity {
         mContent.setText(mArticle.getContent().equals("") ? "No content found" : mArticle.getContent());
         if (mArticle.getImage() != null) {
             if (mArticle.getImage().startsWith("http")) {
-                new DownloadImageTask(mPicture).execute(mArticle.getImage());
+                new Utils.DownloadImageTask(mPicture).execute(mArticle.getImage());
             }
         }
         //mFavRssViewModel = ViewModelProviders.of(this).get(FavRssViewModel.class);
@@ -98,31 +98,5 @@ public class RSSDetail extends AppCompatActivity {
             }
         }
         return true;
-    }
-
-
-    private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView bmImage;
-
-        public DownloadImageTask(ImageView bmImage) {
-            this.bmImage = bmImage;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            Bitmap mIcon11 = null;
-            try {
-                InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
-            } catch (Exception e) {
-                Log.e("Error", e.getMessage());
-                e.printStackTrace();
-            }
-            return mIcon11;
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            bmImage.setImageBitmap(result);
-        }
     }
 }

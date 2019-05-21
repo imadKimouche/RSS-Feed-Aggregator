@@ -3,16 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/content_frame"
+    <ListView
+        android:id="@+id/favoriteList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="55dp">
-
-        <ListView
-            android:id="@+id/favoriteList"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible" />
-    </FrameLayout>
+        android:visibility="visible" />
 </RelativeLayout>
