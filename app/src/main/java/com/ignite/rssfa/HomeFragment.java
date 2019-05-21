@@ -58,7 +58,7 @@ public class HomeFragment extends Fragment {
                 MyFeedsFragment myFeedsFragment = new MyFeedsFragment();
                 myFeedsFragment.setArguments(bundle);
 
-                Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myFeedsFragment).commit();
+                Objects.requireNonNull(getActivity()).getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, myFeedsFragment).addToBackStack("HomeFragment").commit();
             }
 
             @Override

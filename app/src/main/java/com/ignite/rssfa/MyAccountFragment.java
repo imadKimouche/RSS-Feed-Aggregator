@@ -4,11 +4,8 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -41,18 +38,12 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.prof.rssparser.Article;
-import com.prof.rssparser.OnTaskCompleted;
-import com.prof.rssparser.Parser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.w3c.dom.Text;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -68,6 +59,8 @@ public class MyAccountFragment extends Fragment {
     private Button mSingOutButton;
     private TextView mEmail;
     private TextView mEmailHolder;
+    private TextView mUsernameLogged;
+    private TextView mUsernameHolder;
     private SessionManager mSession;
     private Context mContext;
     private CallbackManager mCallbackManager;
@@ -89,6 +82,8 @@ public class MyAccountFragment extends Fragment {
         mSingOutButton = view.findViewById(R.id.signoutButton);
         mEmail = view.findViewById(R.id.email);
         mEmailHolder = view.findViewById(R.id.emailHolder);
+        mUsernameLogged = view.findViewById(R.id.usernameLogged);
+        mUsernameHolder = view.findViewById(R.id.usernameHolder);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
@@ -121,7 +116,7 @@ public class MyAccountFragment extends Fragment {
                                         try {
                                             String token = new JSONObject(new String(responseBody)).getString("token");
                                             mSession.createLoginSession(mUsername, token);
-                                            updateUI("", true);
+                                            updateUI("", mUsername, true);
                                             progressDialog.dismiss();
                                         } catch (JSONException e) {
                                             e.printStackTrace();
@@ -209,7 +204,7 @@ public class MyAccountFragment extends Fragment {
                 mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        updateUI("", false);
+                        updateUI("", "", false);
                     }
                 });
             }
@@ -255,7 +250,7 @@ public class MyAccountFragment extends Fragment {
                 try {
                     String token = new JSONObject(new String(responseBody)).getString("token");
                     mSession.createLoginSession(name, token);
-                    updateUI(email, true);
+                    updateUI(email, name, true);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -268,7 +263,7 @@ public class MyAccountFragment extends Fragment {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         Log.i("DG", "creating google user");
-                        updateUI(email, true);
+                        updateUI(email, name, true);
                         mSession.createLoginSession(name, token);
                     }
 
@@ -283,7 +278,7 @@ public class MyAccountFragment extends Fragment {
                             e.printStackTrace();
                         }
                         Utils.shortToast(mContext, "Server Error: Couldn't add user");
-                        updateUI("", false);
+                        updateUI("", "", false);
                     }
                 });
 
@@ -291,12 +286,19 @@ public class MyAccountFragment extends Fragment {
         });
     }
 
-    private void updateUI(String email, boolean isLoggedIn) {
+    private void updateUI(String email, String username, boolean isLoggedIn) {
         if (isLoggedIn) {
             mSingOutButton.setVisibility(View.VISIBLE);
+            mSigninButton.setVisibility(View.GONE);
             mEmailHolder.setVisibility(View.VISIBLE);
+            mUsernameHolder.setVisibility(View.VISIBLE);
             if (!email.equals("")) {
                 mEmail.setText(email);
+            } else {
+                mEmail.setText("");
+            }
+            if (!username.equals("")) {
+                mUsernameLogged.setText(username);
             } else {
                 mEmail.setText(mSession.getUserDetails().get("UserName"));
             }
@@ -306,7 +308,9 @@ public class MyAccountFragment extends Fragment {
             getView().findViewById(R.id.loginForm).setVisibility(View.GONE);
         } else {
             mSingOutButton.setVisibility(View.GONE);
+            mSigninButton.setVisibility(View.VISIBLE);
             mEmailHolder.setVisibility(View.GONE);
+            mUsernameHolder.setVisibility(View.GONE);
             mEmail.setVisibility(View.GONE);
             mSigninWithGoogleButton.setVisibility(View.VISIBLE);
             mSigninWithFacebookButton.setVisibility(View.VISIBLE);
@@ -324,11 +328,11 @@ public class MyAccountFragment extends Fragment {
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext());
         mSession = new SessionManager(getActivity().getApplicationContext());
         if (account != null) {
-            updateUI(account.getEmail(), true);
+            updateUI(account.getEmail(), account.getDisplayName(), true);
         } else if (mSession.isLoggedIn()) {
-            updateUI(mSession.getUserDetails().get(SessionManager.KEY_USERNAME), true);
+            updateUI(mSession.getUserDetails().get(SessionManager.KEY_USERNAME), "", true);
         } else {
-            updateUI("", false);
+            updateUI("", "", false);
         }
     }
 

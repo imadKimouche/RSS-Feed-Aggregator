@@ -1,6 +1,5 @@
 package com.ignite.rssfa;
 
-import android.content.AbstractThreadedSyncAdapter;
 import android.content.Context;
 import android.util.Log;
 
@@ -14,7 +13,6 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
@@ -97,7 +95,7 @@ final class HttpRequest {
 
     public static void getAllFeeds(String token, AsyncHttpResponseHandler handler) {
         client.addHeader("token", token);
-        client.get(getAbsoluteUrl("feeds/user"), handler);
+        client.get(getAbsoluteUrl("feeds/user "), handler);
     }
 
     public static void getRandomArticles(AsyncHttpResponseHandler handler) {
@@ -106,6 +104,7 @@ final class HttpRequest {
 
     public static void addFeed(Context context, String token, String rssUrl, AsyncHttpResponseHandler handler) {
         JSONObject jsonParams = new JSONObject();
+        client.setConnectTimeout(30000);
         try {
             jsonParams.put("url", rssUrl);
             StringEntity entity = new StringEntity(jsonParams.toString());
@@ -122,6 +121,14 @@ final class HttpRequest {
         client.addHeader("token", token);
         client.delete(getAbsoluteUrl("feeds/user/delete/" + id), handler);
     }
+
+
+    public static void getFeed(int id, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("token", token);
+        client.get(getAbsoluteUrl("feeds/" + id), handler);
+    }
+
+
 
     private static String getAbsoluteUrl(String relativeUrl) {
         return BASE_URL + relativeUrl;

@@ -1,6 +1,7 @@
 package com.ignite.rssfa;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -44,6 +45,7 @@ public class MyFeedsFragment extends Fragment {
     List<Feed> feedList = new ArrayList<>();
     FloatingActionButton mAddFeed;
     private String mUrl;
+    private boolean fromHome;
 
     @Nullable
     @Override
@@ -54,8 +56,8 @@ public class MyFeedsFragment extends Fragment {
         mFeedList.setAdapter(adapter);
         mAddFeed = view.findViewById(R.id.add_feed);
         SessionManager sessionManager = new SessionManager(getActivity());
-
-        if (this.getArguments() != null && this.getArguments().getParcelableArrayList("feeds") != null) {
+        fromHome = this.getArguments() != null && this.getArguments().getParcelableArrayList("feeds") != null;
+        if (fromHome) {
             feedList = this.getArguments().getParcelableArrayList("feeds");
             adapter.setmFeedList(feedList);
             adapter.notifyDataSetChanged();
@@ -75,7 +77,11 @@ public class MyFeedsFragment extends Fragment {
                                 Feed feed = new Feed(feedObj.getInt("id"), feedObj.get("title").toString(), feedObj.get("link").toString(),
                                         feedObj.get("description").toString(), feedObj.get("language").toString(),
                                         feedObj.get("pubDate").toString(), feedObj.get("rssURL").toString(), "", new ArrayList<>());
-
+                                new Handler(Looper.getMainLooper()).post(() -> {
+                                    adapter.addFeed(feed);
+                                    adapter.notifyDataSetChanged();
+                                });
+/*
                                 Parser parser = new Parser();
                                 parser.onFinish(new OnTaskCompleted() {
 
@@ -94,7 +100,7 @@ public class MyFeedsFragment extends Fragment {
                                         Log.i("error parsing feed", e.getMessage());
                                     }
                                 });
-                                parser.execute(feed.getRssUrl());
+                                parser.execute(feed.getRssUrl());*/
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -123,15 +129,28 @@ public class MyFeedsFragment extends Fragment {
             }
         });
 */
-
         mFeedList.setOnItemClickListener((parent, view1, position, id) -> {
             Feed feed = feedList.get(position);
             feed.setArticles(new ArrayList<>());
-            Parser parser = new Parser();
+            HttpRequest.getFeed(feed.getUid(), sessionManager.getUserDetails().get(SessionManager.KEY_access_token), new AsyncHttpResponseHandler() {
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    Log.w("feed", new String(responseBody));
+                }
+
+                @Override
+                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                    Log.w("feed", new String(responseBody));
+                }
+            });
+/*            Parser parser = new Parser();
             parser.onFinish(new OnTaskCompleted() {
 
                 @Override
                 public void onTaskCompleted(List<Article> list) {
+                    for (int i = 0; i < list.size(); i++) {
+                        Log.i("content", list.get(i).getContent());
+                    }
                     feed.setArticlesFromParser(list);
                     openFeedDetail(feed);
                 }
@@ -141,7 +160,7 @@ public class MyFeedsFragment extends Fragment {
                     Log.i("error parsing feed", e.getMessage());
                 }
             });
-            parser.execute(feed.getRssUrl());
+            parser.execute(feed.getRssUrl());*/
         });
 
         mFeedList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -183,6 +202,11 @@ public class MyFeedsFragment extends Fragment {
             builder.setView(input);
 
             builder.setPositiveButton("OK", (dialog, which) -> {
+                final ProgressDialog progressDialog = new ProgressDialog(getActivity(),
+                        R.style.com_facebook_auth_dialog);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Adding RSS Feed...");
+                progressDialog.show();
                 mUrl = input.getText().toString();
                 if (sessionManager.checkLogin()) {
                     String token = sessionManager.getUserDetails().get(SessionManager.KEY_access_token);
@@ -203,27 +227,33 @@ public class MyFeedsFragment extends Fragment {
                                         new Handler(Looper.getMainLooper()).post(() -> {
                                             adapter.addFeed(feed);
                                             adapter.notifyDataSetChanged();
+                                            progressDialog.dismiss();
                                         });
                                     }
 
                                     @Override
                                     public void onError(Exception e) {
                                         Log.i("error parsing feed", e.getMessage());
+                                        progressDialog.dismiss();
                                     }
                                 });
                                 parser.execute(mUrl);
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            Utils.shortToast(getActivity(), "RSS link added");
+                            progressDialog.dismiss();
+                            Utils.shortToast(getActivity(), "RSS feed added");
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                            Log.w("failed", new String(responseBody));
+                            progressDialog.dismiss();
                             Utils.shortToast(getActivity(), "Failed to add link");
                         }
                     });
                 } else {
+                    progressDialog.dismiss();
                     Utils.shortToast(getActivity(), "Login first(Menu -> My Account)");
                 }
             });

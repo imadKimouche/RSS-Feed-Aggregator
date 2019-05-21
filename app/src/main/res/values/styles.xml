@@ -13,4 +13,20 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="EditTextTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">@color/black</item>
+        <item name="colorControlActivated">@color/colorSecondaryDark</item>
+        <item name="colorControlHighlight">@color/colorSecondaryDark</item>
+    </style>
+
+    <style name="TextTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">@color/black</item>
+        <item name="colorControlActivated">@color/colorSecondaryDark</item>
+        <item name="colorControlHighlight">@color/colorSecondaryDark</item>
+    </style>
+
+    <style name="AlertDialogCustom" parent="@android:style/Theme.Dialog">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:background">@color/colorPrimary</item>
+    </style>
 </resources>

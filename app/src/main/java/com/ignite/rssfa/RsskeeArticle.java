@@ -114,4 +114,10 @@ public class RsskeeArticle implements Parcelable {
         dest.writeString(pubDate);
         dest.writeString(author);
     }
+
+    @Override
+    public String toString() {
+
+        return "authror: " + author + " title: " + title + " desc: " + description + " content: " + content;
+    }
 }

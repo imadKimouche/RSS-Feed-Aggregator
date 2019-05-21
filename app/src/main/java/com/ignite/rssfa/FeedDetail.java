@@ -9,7 +9,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.ignite.rssfa.db.entity.Feed;
-import com.ignite.rssfa.db.entity.RSS;
 
 import java.util.List;
 
@@ -29,7 +28,10 @@ public class FeedDetail extends AppCompatActivity {
 
         mArticleList = findViewById(R.id.articleList);
         mArticles = mFeed.getArticles();
-        Log.i("article", String.valueOf(mArticles.size()));
+        //Log.i("article", String.valueOf(mArticles.size()));
+        for (int i = 0; i < mArticles.size(); i++) {
+            Log.i("content", mArticles.get(i).toString());
+        }
         ArticleAdapter adapter = new ArticleAdapter(this, mArticles);
         mArticleList.setAdapter(adapter);
 

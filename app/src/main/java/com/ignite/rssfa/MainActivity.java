@@ -3,13 +3,17 @@ package com.ignite.rssfa;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ExpandableListView;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.ignite.rssfa.db.AppDatabase;
 
@@ -29,6 +33,15 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        View headerLayout = navigationView.getHeaderView(0);
+
+        TextView userStatus = headerLayout.findViewById(R.id.userStatus);
+        ImageView statusIcon = headerLayout.findViewById(R.id.statusIcon);
+        SessionManager sessionManager = new SessionManager(this);
+        userStatus.setText(sessionManager.isLoggedIn() ? sessionManager.getUserDetails().get(SessionManager.KEY_USERNAME) : "You're not logged in");
+        statusIcon.setColorFilter(ContextCompat.getColor(this, sessionManager.isLoggedIn() ? R.color.colorDarkGreen : R.color.colorOrange), android.graphics.PorterDuff.Mode.SRC_IN);
+
 
         Toolbar toolbar = findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
