@@ -10,8 +10,8 @@
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="150dp"
+        android:layout_height="107dp"
         android:src="@drawable/rsskee_logo" />
 
     <LinearLayout
@@ -21,8 +21,9 @@
 
         <ImageView
             android:id="@+id/statusIcon"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:layout_gravity="center_vertical"
             app:srcCompat="@drawable/ic_status" />
 
         <TextView
@@ -30,6 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
+            android:layout_gravity="center_vertical"
             android:layout_marginLeft="7dp"/>
 
     </LinearLayout>

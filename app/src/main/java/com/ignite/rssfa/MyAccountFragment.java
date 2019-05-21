@@ -288,6 +288,7 @@ public class MyAccountFragment extends Fragment {
 
     private void updateUI(String email, String username, boolean isLoggedIn) {
         if (isLoggedIn) {
+            mUsernameLogged.setVisibility(View.VISIBLE);
             mSingOutButton.setVisibility(View.VISIBLE);
             mSigninButton.setVisibility(View.GONE);
             mEmailHolder.setVisibility(View.VISIBLE);
@@ -307,6 +308,7 @@ public class MyAccountFragment extends Fragment {
             mSigninWithFacebookButton.setVisibility(View.GONE);
             getView().findViewById(R.id.loginForm).setVisibility(View.GONE);
         } else {
+            mUsernameLogged.setVisibility(View.GONE);
             mSingOutButton.setVisibility(View.GONE);
             mSigninButton.setVisibility(View.VISIBLE);
             mEmailHolder.setVisibility(View.GONE);

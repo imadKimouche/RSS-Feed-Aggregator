@@ -193,4 +193,8 @@ public class Feed implements Parcelable {
     public void setImage(String image) {
         this.image = image;
     }
+
+    public  void addArticle(RsskeeArticle article) {
+        this.articles.add(article);
+    }
 }

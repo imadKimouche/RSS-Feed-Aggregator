@@ -22,7 +22,7 @@
                 android:id="@+id/usernameHolder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Username" />
+                android:text="@string/username" />
 
             <TextView
                 android:id="@+id/usernameLogged"
@@ -34,15 +34,14 @@
                 android:id="@+id/emailHolder"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Email" />
+                android:text="@string/email" />
 
             <TextView
                 android:id="@+id/email"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginBottom="100dp" />
+                android:layout_marginLeft="10dp" />
         </LinearLayout>
 
         <LinearLayout
@@ -51,14 +50,13 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:paddingLeft="24dp"
-            android:paddingTop="56dp"
-            android:paddingRight="24dp">
+            android:paddingRight="24dp"
+            android:paddingBottom="60dp">
 
             <ImageView
                 android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:layout_gravity="center_horizontal"
-                android:paddingBottom="60dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center|top"
                 app:srcCompat="@drawable/rsskee_logo" />
 
             <!-- Email Label -->
@@ -73,7 +71,7 @@
                     android:id="@+id/username"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Username / Email"
+                    android:hint="@string/username_email"
                     android:inputType="textEmailAddress"
                     android:theme="@style/EditTextTheme" />
             </android.support.design.widget.TextInputLayout>
@@ -90,7 +88,7 @@
                     android:id="@+id/password"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Password"
+                    android:hint="@string/password"
                     android:inputType="textPassword"
                     android:theme="@style/EditTextTheme" />
             </android.support.design.widget.TextInputLayout>

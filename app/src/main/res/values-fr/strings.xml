@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">RSSKEE</string>
+    <string name="welcome">Bienvenue</string>
+    <string name="user_icon">" Icône d'utilisateur"</string>
+    <string name="topics">Thèmes</string>
+    <string name="title_activity_login">"Se connecter "</string>
+    <string name="sign_out">Déconnexion</string>
+    <string name="sign_in">"Se connecter "</string>
+    <string name="save_this_article_for_later">"Enregistrer cet article pour plus tard "</string>
+    <string name="prompt_password">"Mot de passe "</string>
+    <string name="prompt_email">Email</string>
+    <string name="my_feeds">"Mes flux "</string>
+    <string name="my_account">"Mon compte "</string>
+    <string name="login_failed">"Échec de la connexion "</string>
+    <string name="login">Connexion</string>
+    <string name="featured_topics">"Thèmes en vedette "</string>
+    <string name="featured_articles">"Articles en vedette "</string>
+    <string name="favorite_this_article">Mettre en favoris</string>
+    <string name="discover">Découvrir</string>
+    <string name="nav_saved_for_later">Enregistré pour plus tard</string>
+    <string name="nav_favorite">Favoris</string>
+    <string name="email">Email</string>
+    <string name="nav_home">Accueil</string>
+    <string name="password">Mot de passe</string>
+    <string name="sign_in_with_facebook">Se connecter avec Facebook</string>
+    <string name="sign_in_with_google">Se connecter avec Google</string>
+    <string name="username">"Nom d'utilisateur "</string>
+    <string name="username_email">Nom d\'utilisateur / Email</string>
+    <string name="Login_expired">" Connexion expirée, veuillez vous déconnecter et vous reconnecter"</string>
+    <string name="add_rss_feed_link">Ajouter un lien de flux RSS</string>
+    <string name="adding_rss_feed">"Ajout de flux RSS…"</string>
+    <string name="cancel">Annuler</string>
+    <string name="delete">Supprimer?</string>
+    <string name="failed_to_add_link">Impossible d\'ajouter le lien</string>
+    <string name="login_first">"Connectez-vous d'abord (Menu -> Mon compte) "</string>
+    <string name="rss_feed_added">"Flux RSS ajouté "</string>
+    <string name="are_you_sure_you_want_to_delete">"Etes-vous sûr de vouloir supprimer"</string>
+    <string name="disconnected">Hors ligne</string>
+    <string name="feed_has_been_removed">Flux a été supprimé</string>
+    <string name="share_via">Partager via</string>
+</resources>

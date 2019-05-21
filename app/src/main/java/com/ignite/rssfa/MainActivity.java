@@ -1,5 +1,6 @@
 package com.ignite.rssfa;
 
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -11,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ExpandableListView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,35 +21,49 @@ import com.ignite.rssfa.db.AppDatabase;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private DrawerLayout drawer;
+    private TextView mUserStatus;
+    private ImageView mStatusIcon;
+    private SessionManager mSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Locale locale = new Locale("en");
+        Configuration config = getBaseContext().getResources().getConfiguration();
+        config.locale = locale;
+        getBaseContext().getResources().updateConfiguration(config, getBaseContext().getResources().getDisplayMetrics());
+
+        mSession= new SessionManager(this);
         drawer = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         View headerLayout = navigationView.getHeaderView(0);
 
-        TextView userStatus = headerLayout.findViewById(R.id.userStatus);
-        ImageView statusIcon = headerLayout.findViewById(R.id.statusIcon);
-        SessionManager sessionManager = new SessionManager(this);
-        userStatus.setText(sessionManager.isLoggedIn() ? sessionManager.getUserDetails().get(SessionManager.KEY_USERNAME) : "You're not logged in");
-        statusIcon.setColorFilter(ContextCompat.getColor(this, sessionManager.isLoggedIn() ? R.color.colorDarkGreen : R.color.colorOrange), android.graphics.PorterDuff.Mode.SRC_IN);
+        mUserStatus = headerLayout.findViewById(R.id.userStatus);
+        mStatusIcon = headerLayout.findViewById(R.id.statusIcon);
 
 
         Toolbar toolbar = findViewById(R.id.toolBar);
         setSupportActionBar(toolbar);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open,
-                R.string.navigation_drawer_close);
+                R.string.navigation_drawer_close) {
+
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+                updateUserStatus();
+            }
+        };
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         if (savedInstanceState == null) {
@@ -89,5 +105,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         } else {
             super.onBackPressed();
         }
+    }
+
+    private void updateUserStatus() {
+        boolean logged = mSession.isLoggedIn();
+        mUserStatus.setText(logged ? mSession.getUserDetails().get(SessionManager.KEY_USERNAME) : getResources().getString(R.string.disconnected));
+        mStatusIcon.setColorFilter(ContextCompat.getColor(this, logged ? R.color.colorDarkGreen : R.color.colorOrange), android.graphics.PorterDuff.Mode.SRC_IN);
     }
 }

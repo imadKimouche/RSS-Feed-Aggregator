@@ -20,7 +20,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -76,7 +75,7 @@ public class HomeFragment extends Fragment {
                         JSONObject article = articles.getJSONObject(i);
                         String content = article.get("description").toString();
                         String desc = content.substring(0, (content.length() > 100) ? 100 : content.length());
-                        RsskeeArticle articleToLoad = new RsskeeArticle(article.get("title").toString(), desc, content, "", "", article.get("author").toString());
+                        RsskeeArticle articleToLoad = new RsskeeArticle(article.get("title").toString(), desc, content, "", "", article.get("author").toString(), article.get("link").toString());
                         articleList.add(articleToLoad);
                         ArticleAdapter adapter = new ArticleAdapter(getActivity(), articleList);
                         mFeedList.setAdapter(adapter);

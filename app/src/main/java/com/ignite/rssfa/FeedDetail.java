@@ -28,21 +28,12 @@ public class FeedDetail extends AppCompatActivity {
 
         mArticleList = findViewById(R.id.articleList);
         mArticles = mFeed.getArticles();
-        //Log.i("article", String.valueOf(mArticles.size()));
-        for (int i = 0; i < mArticles.size(); i++) {
-            Log.i("content", mArticles.get(i).toString());
-        }
         ArticleAdapter adapter = new ArticleAdapter(this, mArticles);
         mArticleList.setAdapter(adapter);
 
-        mArticleList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    final int position, long id) {
-                RsskeeArticle article = mArticles.get(position);
-                openRSSDetail(article);
-            }
+        mArticleList.setOnItemClickListener((parent, view, position, id) -> {
+            RsskeeArticle article = mArticles.get(position);
+            openRSSDetail(article);
         });
     }
 

@@ -12,14 +12,16 @@ public class RsskeeArticle implements Parcelable {
     private String image;
     private String pubDate;
     private String author;
+    private String url;
 
-    public RsskeeArticle(String title, String description, String content, String image, String pubDate, String author) {
+    public RsskeeArticle(String title, String description, String content, String image, String pubDate, String author, String url) {
         this.title = title;
         this.description = description;
         this.content = content;
         this.image = image;
         this.pubDate = pubDate;
         this.author = author;
+        this.url = url;
     }
 
     public RsskeeArticle(Article article) {
@@ -29,6 +31,7 @@ public class RsskeeArticle implements Parcelable {
         this.image = article.getImage();
         this.pubDate = article.getPubDate();
         this.author = article.getAuthor();
+        this.url = article.getLink();
     }
 
     protected RsskeeArticle(Parcel in) {
@@ -38,6 +41,7 @@ public class RsskeeArticle implements Parcelable {
         image = in.readString();
         pubDate = in.readString();
         author = in.readString();
+        url = in.readString();
     }
 
     public static final Creator<RsskeeArticle> CREATOR = new Creator<RsskeeArticle>() {
@@ -113,11 +117,20 @@ public class RsskeeArticle implements Parcelable {
         dest.writeString(image);
         dest.writeString(pubDate);
         dest.writeString(author);
+        dest.writeString(url);
     }
 
     @Override
     public String toString() {
 
         return "authror: " + author + " title: " + title + " desc: " + description + " content: " + content;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

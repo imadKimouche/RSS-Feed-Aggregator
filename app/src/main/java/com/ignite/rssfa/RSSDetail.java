@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,6 +25,10 @@ public class RSSDetail extends AppCompatActivity {
 
     private RsskeeArticle mArticle;
     FavRssViewModel mFavRssViewModel;
+    private TextView mTitle;
+    private TextView mContent;
+    private RelativeLayout mBackground;
+    private boolean toggled = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +38,11 @@ public class RSSDetail extends AppCompatActivity {
         mArticle = intent.getParcelableExtra("article");
         setTitle(mArticle.getTitle());
         ImageView mPicture = findViewById(R.id.picture);
-        TextView mTitle = findViewById(R.id.title);
-        TextView mText = findViewById(R.id.text);
+        mTitle = findViewById(R.id.title);
+        mContent = findViewById(R.id.text);
+        mBackground = findViewById(R.id.background);
         mTitle.setText(mArticle.getTitle().equals("") ? "No title found" : mArticle.getTitle());
-        mText.setText(mArticle.getContent().equals("") ? "No content found" : mArticle.getContent());
+        mContent.setText(mArticle.getContent().equals("") ? "No content found" : mArticle.getContent());
         if (mArticle.getImage() != null) {
             if (mArticle.getImage().startsWith("http")) {
                 new DownloadImageTask(mPicture).execute(mArticle.getImage());
@@ -53,11 +59,11 @@ public class RSSDetail extends AppCompatActivity {
         //item.setIcon(mFavRssViewModel.exists(mRss) ? R.drawable.ic_favorite_enabled : R.drawable.ic_favorite);
         return true;
     }
-/*
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.ab_save:
+/*            case R.id.ab_save:
                 Toast.makeText(this, "Article Saved", Toast.LENGTH_SHORT).show();
                 break;
             case R.id.ab_favorite: {
@@ -65,10 +71,34 @@ public class RSSDetail extends AppCompatActivity {
                 item.setIcon(result ? R.drawable.ic_favorite_enabled : R.drawable.ic_favorite);
                 Toast.makeText(this, result ? "Added Favorite" : "Removed Favorite", Toast.LENGTH_SHORT).show();
                 break;
+            }*/
+            case R.id.ab_share: {
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                String shareBody = mArticle.getUrl();
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, mArticle.getTitle());
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, shareBody);
+                startActivity(Intent.createChooser(sharingIntent, getString(R.string.share_via)));
+                break;
+            }
+            case R.id.ab_darkMode: {
+                if (!toggled) {
+                    mBackground.setBackgroundColor(getResources().getColor(R.color.black));
+                    mTitle.setTextColor(getResources().getColor(R.color.white));
+                    mContent.setTextColor(getResources().getColor(R.color.white));
+                    toggled = true;
+                } else {
+                    mBackground.setBackgroundColor(getResources().getColor(R.color.white));
+                    mTitle.setTextColor(getResources().getColor(R.color.black));
+                    mContent.setTextColor(getResources().getColor(R.color.black));
+                    toggled = false;
+
+                }
+                break;
             }
         }
         return true;
-    }*/
+    }
 
 
     private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {

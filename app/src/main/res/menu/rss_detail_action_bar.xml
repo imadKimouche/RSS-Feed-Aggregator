@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/ab_darkMode"
+        android:icon="@drawable/ic_darkmode"
+        android:title="@string/save_this_article_for_later"
+        app:showAsAction="always" />
     <item
         android:id="@+id/ab_favorite"
         android:icon="@drawable/ic_favorite"
@@ -11,5 +17,11 @@
         android:id="@+id/ab_save"
         android:icon="@drawable/ic_bookmark"
         android:title="@string/save_this_article_for_later"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/ab_share"
+        android:icon="@drawable/ic_share"
+        android:title="@string/save_this_article_for_later"
+        app:showAsAction="always" />
 </menu>
