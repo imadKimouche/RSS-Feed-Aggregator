@@ -42,7 +42,8 @@ public class Feed implements Parcelable {
     }
 
     @Ignore
-    public Feed(String title, String link, String description, String language, String pubDate, String rssUrl, String image, List<RsskeeArticle> articles) {
+    public Feed(int id, String title, String link, String description, String language, String pubDate, String rssUrl, String image, List<RsskeeArticle> articles) {
+        this.uid = id;
         this.title = title;
         this.link = link;
         this.description = description;

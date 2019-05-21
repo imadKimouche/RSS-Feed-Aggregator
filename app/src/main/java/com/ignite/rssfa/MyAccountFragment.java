@@ -1,17 +1,27 @@
 package com.ignite.rssfa;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.CallbackManager;
@@ -26,16 +36,23 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.prof.rssparser.Article;
+import com.prof.rssparser.OnTaskCompleted;
+import com.prof.rssparser.Parser;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -46,7 +63,7 @@ public class MyAccountFragment extends Fragment {
     private String mPassword = "";
     private GoogleSignInClient mGoogleSignInClient;
     private Button mSigninButton;
-    private Button mSigninWithGoogleButton;
+    private SignInButton mSigninWithGoogleButton;
     private LoginButton mSigninWithFacebookButton;
     private Button mSingOutButton;
     private TextView mEmail;
@@ -84,30 +101,44 @@ public class MyAccountFragment extends Fragment {
         mSigninButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View view) {
+
+                final ProgressDialog progressDialog = new ProgressDialog(getActivity(),
+                        R.style.com_facebook_auth_dialog);
+                progressDialog.setIndeterminate(true);
+                progressDialog.setMessage("Authenticating...");
+                progressDialog.show();
+
                 mUsername = usernameEditText.getText().toString();
                 mPassword = passwordEditText.getText().toString();
-                if (!mUsername.equals("") && !mPassword.equals("")) {
-                    HttpRequest.login(mUsername, mPassword, new AsyncHttpResponseHandler() {
-                        @Override
-                        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                            Log.i("STATUS CODE", String.valueOf(statusCode));
-                            try {
-                                String token = new JSONObject(new String(responseBody)).getString("token");
-                                mSession.createLoginSession(mUsername, token);
-                                updateUI("", true);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                new android.os.Handler().postDelayed(
+                        () -> {
+                            if (!mUsername.equals("") && !mPassword.equals("")) {
 
-                        @Override
-                        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            Utils.longToast(mContext, "Authentification failed! Wrong username or password!");
-                        }
-                    });
-                } else {
-                    Utils.longToast(mContext, "Username or Password shouldn't be empty!");
-                }
+                                HttpRequest.login(mUsername, mPassword, new AsyncHttpResponseHandler() {
+                                    @Override
+                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                        Log.i("STATUS CODE", String.valueOf(statusCode));
+                                        try {
+                                            String token = new JSONObject(new String(responseBody)).getString("token");
+                                            mSession.createLoginSession(mUsername, token);
+                                            updateUI("", true);
+                                            progressDialog.dismiss();
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                        progressDialog.dismiss();
+                                        Utils.longToast(mContext, "Authentification failed! Wrong username or password!");
+                                    }
+                                });
+                            } else {
+                                Utils.longToast(mContext, "Username or Password shouldn't be empty!");
+                                progressDialog.dismiss();
+                            }
+                        }, 3000);
             }
         });
 
@@ -157,7 +188,7 @@ public class MyAccountFragment extends Fragment {
 
             @Override
             public void onError(FacebookException exception) {
-                Log.i("test", "error");
+                Log.i("FAE", exception.toString());
             }
         });
 
@@ -195,7 +226,6 @@ public class MyAccountFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("request code", String.valueOf(requestCode));
 
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
@@ -211,13 +241,14 @@ public class MyAccountFragment extends Fragment {
             String idToken = account.getIdToken();
             String displayName = account.getDisplayName();
             String email = account.getEmail();
-            handleSignInResult(displayName, idToken, email);
+            handleSignInResult(displayName, email, idToken);
         } else {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
 
     private void handleSignInResult(String name, String email, String token) {
+        //requirePassword(name, email);
         HttpRequest.login(name, token.substring(0, 15), new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -272,14 +303,14 @@ public class MyAccountFragment extends Fragment {
             mEmail.setVisibility(View.VISIBLE);
             mSigninWithGoogleButton.setVisibility(View.GONE);
             mSigninWithFacebookButton.setVisibility(View.GONE);
-            getView().findViewById(R.id.tableLayout).setVisibility(View.GONE);
+            getView().findViewById(R.id.loginForm).setVisibility(View.GONE);
         } else {
             mSingOutButton.setVisibility(View.GONE);
             mEmailHolder.setVisibility(View.GONE);
             mEmail.setVisibility(View.GONE);
             mSigninWithGoogleButton.setVisibility(View.VISIBLE);
             mSigninWithFacebookButton.setVisibility(View.VISIBLE);
-            getView().findViewById(R.id.tableLayout).setVisibility(View.VISIBLE);
+            getView().findViewById(R.id.loginForm).setVisibility(View.VISIBLE);
 
         }
     }
@@ -300,4 +331,70 @@ public class MyAccountFragment extends Fragment {
             updateUI("", false);
         }
     }
+
+    private void requirePassword(String username, String email) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Create Account");
+        Activity activity = getActivity();
+        final TextView usernameText = new TextView(activity);
+        final TextView emailText = new TextView(activity);
+        final EditText inputPasswrod = new EditText(activity);
+        final EditText inputConfirm = new EditText(activity);
+        final TextView error = new TextView(activity);
+        final TextView passwordText = new TextView(activity);
+        final TextView confirmText = new TextView(activity);
+        final LinearLayout layout = new LinearLayout(activity);
+        passwordText.setText("Passwrod");
+        confirmText.setText("Confirm Password");
+        usernameText.setText("Username: " + username);
+        emailText.setText("Email: " + email);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        inputPasswrod.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        inputConfirm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        error.setText("Passwor and confirmation mismatch");
+        error.setTextColor(getResources().getColor(R.color.colorError));
+        error.setVisibility(View.GONE);
+        layout.addView(usernameText);
+        layout.addView(emailText);
+        layout.addView(passwordText);
+        layout.addView(inputPasswrod);
+        layout.addView(confirmText);
+        layout.addView(inputConfirm);
+        layout.addView(error);
+        builder.setView(layout);
+
+        builder.setPositiveButton("Done", (dialog, which) -> {
+
+        });
+        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
+
+        AlertDialog dialog = builder.create();
+        inputConfirm.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
+                if (!inputPasswrod.getText().toString().equals(inputConfirm.getText().toString())) {
+                    error.setVisibility(View.VISIBLE);
+                    okButton.setEnabled(false);
+                } else {
+                    error.setVisibility(View.GONE);
+                    okButton.setEnabled(true);
+                }
+            }
+        });
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
+    }
+
 }

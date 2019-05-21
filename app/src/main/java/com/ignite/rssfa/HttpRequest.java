@@ -97,7 +97,7 @@ final class HttpRequest {
 
     public static void getAllFeeds(String token, AsyncHttpResponseHandler handler) {
         client.addHeader("token", token);
-        client.get(getAbsoluteUrl("feeds"), handler);
+        client.get(getAbsoluteUrl("feeds/user"), handler);
     }
 
     public static void getRandomArticles(AsyncHttpResponseHandler handler) {
@@ -116,6 +116,11 @@ final class HttpRequest {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void deleteFeed(int id, String token, AsyncHttpResponseHandler handler) {
+        client.addHeader("token", token);
+        client.delete(getAbsoluteUrl("feeds/user/delete/" + id), handler);
     }
 
     private static String getAbsoluteUrl(String relativeUrl) {

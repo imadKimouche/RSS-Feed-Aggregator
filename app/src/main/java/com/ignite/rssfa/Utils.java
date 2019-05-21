@@ -39,4 +39,8 @@ public class Utils {
 
         return topics;
     }
+
+    public static void logError(String className, int statusCode, String error) {
+        Log.w(className, statusCode + " " + error);
+    }
 }

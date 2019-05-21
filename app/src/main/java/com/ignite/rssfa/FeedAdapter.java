@@ -46,7 +46,7 @@ public class FeedAdapter extends ArrayAdapter<Feed> {
         if (feed != null) {
             viewHolder.title.setText(feed.getTitle());
             viewHolder.description.setText(feed.getDescription());
-            if (!feed.getImage().equals("")) {
+            if (feed.getImage() != null && !feed.getImage().equals("")) {
                 new DownloadImageTask(viewHolder.picture).execute(feed.getImage());
             }
         }
@@ -86,7 +86,9 @@ public class FeedAdapter extends ArrayAdapter<Feed> {
             Bitmap mIcon11 = null;
             try {
                 InputStream in = new java.net.URL(urldisplay).openStream();
-                mIcon11 = BitmapFactory.decodeStream(in);
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inSampleSize = 2;
+                mIcon11 = BitmapFactory.decodeStream(in, null, options);
             } catch (Exception e) {
                 Log.e("Error", e.getMessage());
                 e.printStackTrace();
