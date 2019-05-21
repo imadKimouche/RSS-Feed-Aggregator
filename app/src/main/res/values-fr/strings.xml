@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">RSSKEE</string>
-    <string name="welcome">Bienvenue</string>
-    <string name="user_icon">" Icône d'utilisateur"</string>
     <string name="topics">Thèmes</string>
-    <string name="title_activity_login">"Se connecter "</string>
     <string name="sign_out">Déconnexion</string>
     <string name="sign_in">"Se connecter "</string>
     <string name="save_this_article_for_later">"Enregistrer cet article pour plus tard "</string>
-    <string name="prompt_password">"Mot de passe "</string>
-    <string name="prompt_email">Email</string>
     <string name="my_feeds">"Mes flux "</string>
     <string name="my_account">"Mon compte "</string>
-    <string name="login_failed">"Échec de la connexion "</string>
-    <string name="login">Connexion</string>
     <string name="featured_topics">"Thèmes en vedette "</string>
     <string name="featured_articles">"Articles en vedette "</string>
     <string name="favorite_this_article">Mettre en favoris</string>
@@ -23,8 +16,6 @@
     <string name="email">Email</string>
     <string name="nav_home">Accueil</string>
     <string name="password">Mot de passe</string>
-    <string name="sign_in_with_facebook">Se connecter avec Facebook</string>
-    <string name="sign_in_with_google">Se connecter avec Google</string>
     <string name="username">"Nom d'utilisateur "</string>
     <string name="username_email">Nom d\'utilisateur / Email</string>
     <string name="Login_expired">" Connexion expirée, veuillez vous déconnecter et vous reconnecter"</string>
@@ -39,10 +30,6 @@
     <string name="disconnected">Hors ligne</string>
     <string name="feed_has_been_removed">Flux a été supprimé</string>
     <string name="share_via">Partager via</string>
-    <string name="action_sign_in">Connexion ou Inscription</string>
-    <string name="action_sign_in_short">Se connecter</string>
-    <string name="invalid_password">Le mot de passe doit comporter plus de 5 caractères.</string>
-    <string name="invalid_username">Nom d\'utilisateur non valide</string>
     <string name="navigation_drawer_close">"Fermer le tiroir de navigation "</string>
     <string name="navigation_drawer_open">Ouvrir le tiroir de navigation</string>
     <string name="confirm_password">Confirmer le mot de passe</string>
