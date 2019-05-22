@@ -94,6 +94,7 @@ final class HttpRequest {
     }
 
     public static void getAllFeeds(String token, AsyncHttpResponseHandler handler) {
+        client.removeAllHeaders();
         client.addHeader("token", token);
         client.get(getAbsoluteUrl("feeds/user "), handler);
     }
@@ -104,7 +105,9 @@ final class HttpRequest {
 
     public static void addFeed(Context context, String token, String rssUrl, AsyncHttpResponseHandler handler) {
         JSONObject jsonParams = new JSONObject();
-        client.setConnectTimeout(30000);
+        client.setConnectTimeout(90000);
+        client.setTimeout(90000);
+        client.setResponseTimeout(90000);
         try {
             jsonParams.put("url", rssUrl);
             StringEntity entity = new StringEntity(jsonParams.toString());
@@ -118,12 +121,15 @@ final class HttpRequest {
     }
 
     public static void deleteFeed(int id, String token, AsyncHttpResponseHandler handler) {
+        client.removeAllHeaders();
         client.addHeader("token", token);
         client.delete(getAbsoluteUrl("feeds/user/delete/" + id), handler);
     }
 
 
     public static void getFeed(int id, String token, AsyncHttpResponseHandler handler) {
+        client.removeAllHeaders();
+        client.setConnectTimeout(30000);
         client.addHeader("token", token);
         client.get(getAbsoluteUrl("feeds/" + id), handler);
     }

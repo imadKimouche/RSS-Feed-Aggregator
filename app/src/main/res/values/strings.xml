@@ -43,5 +43,6 @@
     <string name="dark_mode">Dark mode</string>
     <string name="share">Share</string>
     <string name="authentificating">Authenticating...</string>
+    <string name="visit_website">Visit Website</string>
 
 </resources>

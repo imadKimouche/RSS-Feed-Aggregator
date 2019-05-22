@@ -58,6 +58,7 @@ public class Feed implements Parcelable {
         uid = parcel.readInt();
         title = parcel.readString();
         articles = new ArrayList<>();
+        rssUrl = parcel.readString();
         parcel.readList(articles, RsskeeArticle.class.getClassLoader());
     }
 
@@ -109,6 +110,7 @@ public class Feed implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeInt(uid);
         dest.writeString(title);
+        dest.writeString(rssUrl);
         dest.writeList(articles);
     }
 
@@ -194,7 +196,7 @@ public class Feed implements Parcelable {
         this.image = image;
     }
 
-    public  void addArticle(RsskeeArticle article) {
+    public void addArticle(RsskeeArticle article) {
         this.articles.add(article);
     }
 }

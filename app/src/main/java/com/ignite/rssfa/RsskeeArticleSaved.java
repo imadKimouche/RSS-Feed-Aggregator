@@ -8,8 +8,8 @@ import android.os.Parcelable;
 
 import com.prof.rssparser.Article;
 
-@Entity(tableName = "favoriteArticle")
-public class RsskeeArticle implements Parcelable {
+@Entity(tableName = "savedArticle")
+public class RsskeeArticleSaved implements Parcelable {
     @PrimaryKey(autoGenerate = true)
     private int uid;
     @ColumnInfo(name = "title")
@@ -27,7 +27,7 @@ public class RsskeeArticle implements Parcelable {
     @ColumnInfo(name = "url")
     private String url;
 
-    public RsskeeArticle(String title, String description, String content, String image, String pubDate, String author, String url) {
+    public RsskeeArticleSaved(String title, String description, String content, String image, String pubDate, String author, String url) {
         this.title = title;
         this.description = description;
         this.content = content;
@@ -37,7 +37,7 @@ public class RsskeeArticle implements Parcelable {
         this.url = url;
     }
 
-    public RsskeeArticle(Article article) {
+    public RsskeeArticleSaved(Article article) {
         this.title = article.getTitle();
         this.description = article.getDescription();
         this.content = article.getContent() == null ? "" : article.getContent();
@@ -47,7 +47,8 @@ public class RsskeeArticle implements Parcelable {
         this.url = article.getLink();
     }
 
-    public RsskeeArticle(RsskeeArticleSaved article) {
+    public RsskeeArticleSaved(RsskeeArticle article) {
+        this.uid = article.getUid();
         this.title = article.getTitle();
         this.description = article.getDescription();
         this.content = article.getContent() == null ? "" : article.getContent();
@@ -57,7 +58,7 @@ public class RsskeeArticle implements Parcelable {
         this.url = article.getUrl();
     }
 
-    protected RsskeeArticle(Parcel in) {
+    protected RsskeeArticleSaved(Parcel in) {
         title = in.readString();
         description = in.readString();
         content = in.readString();

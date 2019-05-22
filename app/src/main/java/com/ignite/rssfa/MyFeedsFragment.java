@@ -67,8 +67,13 @@ public class MyFeedsFragment extends Fragment {
             mAddFeed.hide();
         } else {
             mAddFeed.show();
-            MyFeedsViewModel mFeedsViewModel = ViewModelProviders.of(this).get(MyFeedsViewModel.class);
+//            MyFeedsViewModel mFeedsViewModel = ViewModelProviders.of(this).get(MyFeedsViewModel.class);
             if (sessionManager.checkLogin()) {
+                final ProgressDialog progressDialog = new ProgressDialog(mContext, R.style.Spinner);
+                progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+                progressDialog.setIndeterminate(true);
+                progressDialog.show();
+
                 String token = sessionManager.getUserDetails().get(SessionManager.KEY_access_token);
                 HttpRequest.getAllFeeds(token, new AsyncHttpResponseHandler() {
                     @Override
@@ -80,20 +85,23 @@ public class MyFeedsFragment extends Fragment {
                                 Feed feed = new Feed(feedObj.getInt("id"), feedObj.get("title").toString(), feedObj.get("link").toString(),
                                         feedObj.get("description").toString(), feedObj.get("language").toString(),
                                         feedObj.get("pubDate").toString(), feedObj.get("rssURL").toString(), "", new ArrayList<>());
-                                new Handler(Looper.getMainLooper()).post(() -> {
-                                    adapter.addFeed(feed);
-                                    adapter.notifyDataSetChanged();
-                                });
-/*
                                 Parser parser = new Parser();
                                 parser.onFinish(new OnTaskCompleted() {
 
                                     @Override
                                     public void onTaskCompleted(List<Article> list) {
-                                        feed.setImage(list.get(0).getImage());
+                                        String image;
+                                        for (int j = 0; j < list.size(); j++) {
+                                            image = list.get(j).getImage();
+                                            if (image != null) {
+                                                feed.setImage(image);
+                                                break;
+                                            }
+                                        }
                                         new Handler(Looper.getMainLooper()).post(() -> {
                                             adapter.addFeed(feed);
                                             adapter.notifyDataSetChanged();
+                                            progressDialog.dismiss();
                                         });
                                     }
 
@@ -101,9 +109,10 @@ public class MyFeedsFragment extends Fragment {
                                     @Override
                                     public void onError(Exception e) {
                                         Log.i("error parsing feed", e.getMessage());
+                                        progressDialog.dismiss();
                                     }
                                 });
-                                parser.execute(feed.getRssUrl());*/
+                                parser.execute(feed.getRssUrl());
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -112,11 +121,13 @@ public class MyFeedsFragment extends Fragment {
 
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                        Utils.logError(new Object() {
-                        }.getClass().getName(), statusCode, new String(responseBody));
+                        if (responseBody != null)
+                            Utils.logError(new Object() {
+                            }.getClass().getName(), statusCode, new String(responseBody));
                         if (statusCode == 401) {
                             Utils.longToast(mContext, getResources().getString(R.string.Login_expired));
                         }
+                        progressDialog.dismiss();
                     }
                 });
             }
@@ -134,49 +145,7 @@ public class MyFeedsFragment extends Fragment {
 */
         mFeedList.setOnItemClickListener((parent, view1, position, id) -> {
             Feed feed = feedList.get(position);
-            feed.setArticles(new ArrayList<>());
-            HttpRequest.getFeed(feed.getUid(), sessionManager.getUserDetails().get(SessionManager.KEY_access_token), new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    JSONObject feedObj = null;
-                    try {
-                        feedObj = new JSONObject(new String(responseBody));
-                        JSONArray articles = feedObj.getJSONArray("items");
-                        RsskeeArticle article;
-                        for (int i = 0; i < articles.length(); i++) {
-                            JSONObject ja = articles.getJSONObject(i);
-                            article = new RsskeeArticle(ja.get("title").toString(), ja.get("description").toString(), "", "", "", ja.get("author").toString(), ja.get("link").toString());
-                            feed.addArticle(article);
-                            openFeedDetail(feed);
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                }
-
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    Log.w("getFeed", new String(responseBody));
-                }
-            });
-/*            Parser parser = new Parser();
-            parser.onFinish(new OnTaskCompleted() {
-
-                @Override
-                public void onTaskCompleted(List<Article> list) {
-                    for (int i = 0; i < list.size(); i++) {
-                        Log.i("content", list.get(i).getContent());
-                    }
-                    feed.setArticlesFromParser(list);
-                    openFeedDetail(feed);
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    Log.i("error parsing feed", e.getMessage());
-                }
-            });
-            parser.execute(feed.getRssUrl());*/
+            openFeedDetail(feed, sessionManager.getUserDetails().get(SessionManager.KEY_access_token));
         });
 
         mFeedList.setOnItemLongClickListener((parent, view12, position, id) -> {
@@ -232,11 +201,34 @@ public class MyFeedsFragment extends Fragment {
                                 Feed feed = new Feed(feedObj.getInt("id"), feedObj.get("title").toString(), feedObj.get("link").toString(),
                                         feedObj.get("description").toString(), feedObj.get("language").toString(),
                                         feedObj.get("pubDate").toString(), feedObj.get("rssURL").toString(), "", new ArrayList<>());
-                                new Handler(Looper.getMainLooper()).post(() -> {
-                                    adapter.addFeed(feed);
-                                    adapter.notifyDataSetChanged();
-                                    progressDialog.dismiss();
+
+                                Parser parser = new Parser();
+                                parser.onFinish(new OnTaskCompleted() {
+
+                                    @Override
+                                    public void onTaskCompleted(List<Article> list) {
+                                        String image;
+                                        for (int j = 0; j < list.size(); j++) {
+                                            image = list.get(j).getImage();
+                                            if (image != null) {
+                                                feed.setImage(image);
+                                                break;
+                                            }
+                                        }
+                                        new Handler(Looper.getMainLooper()).post(() -> {
+                                            adapter.addFeed(feed);
+                                            adapter.notifyDataSetChanged();
+                                            progressDialog.dismiss();
+                                        });
+                                    }
+
+                                    //what to do in case of error
+                                    @Override
+                                    public void onError(Exception e) {
+                                        Log.i("error parsing feed", e.getMessage());
+                                    }
                                 });
+                                parser.execute(feed.getRssUrl());
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -246,7 +238,9 @@ public class MyFeedsFragment extends Fragment {
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                            Log.w("failed", new String(responseBody));
+                            Log.w("scode:", String.valueOf(statusCode));
+                            if (responseBody != null)
+                                Log.w("failed", new String(responseBody));
                             progressDialog.dismiss();
                             Utils.shortToast(mContext, getString(R.string.failed_to_add_link));
                         }
@@ -264,9 +258,10 @@ public class MyFeedsFragment extends Fragment {
         return view;
     }
 
-    private void openFeedDetail(Feed feed) {
+    private void openFeedDetail(Feed feed, String token) {
         Intent intent = new Intent(mContext, FeedDetail.class);
         intent.putExtra("feed", feed);
+        intent.putExtra("token", token);
         startActivity(intent);
     }
 }

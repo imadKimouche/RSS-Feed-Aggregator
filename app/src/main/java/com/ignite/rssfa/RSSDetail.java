@@ -2,25 +2,32 @@ package com.ignite.rssfa;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ignite.rssfa.db.FavArticleViewModel;
+import com.ignite.rssfa.db.SavedArticleViewModel;
+
+import java.util.Objects;
 
 public class RSSDetail extends AppCompatActivity {
 
     private RsskeeArticle mArticle;
     private FavArticleViewModel mFavArticleViewModel;
+    private SavedArticleViewModel mSavedArticleViewModel;
     private TextView mTitle;
     private TextView mContent;
-    private RelativeLayout mBackground;
+    private LinearLayout mBackground;
     private boolean toggled = false;
 
     @Override
@@ -29,7 +36,6 @@ public class RSSDetail extends AppCompatActivity {
         setContentView(R.layout.activity_rssdetail);
         Intent intent = getIntent();
         mArticle = intent.getParcelableExtra("article");
-        setTitle(mArticle.getTitle());
         ImageView mPicture = findViewById(R.id.picture);
         mTitle = findViewById(R.id.title);
         mContent = findViewById(R.id.text);
@@ -42,6 +48,7 @@ public class RSSDetail extends AppCompatActivity {
             }
         }
         mFavArticleViewModel = ViewModelProviders.of(this).get(FavArticleViewModel.class);
+        mSavedArticleViewModel = ViewModelProviders.of(this).get(SavedArticleViewModel.class);
     }
 
     @Override
@@ -55,12 +62,20 @@ public class RSSDetail extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Boolean result;
         switch (item.getItemId()) {
-/*            case R.id.ab_save:
+/*            case android.R.id.ab_return: {
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+            }*/
+            case R.id.ab_save:
+                RsskeeArticleSaved savedArticle = new RsskeeArticleSaved(mArticle);
+                result = mSavedArticleViewModel.insert(savedArticle);
+//                item.setIcon(result ? R.drawable.ic_bookmark : R.drawable.ic_);
                 Toast.makeText(this, "Article Saved", Toast.LENGTH_SHORT).show();
-                break;*/
+                break;
             case R.id.ab_favorite: {
-                Boolean result = mFavArticleViewModel.insert(mArticle);
+                result = mFavArticleViewModel.insert(mArticle);
                 item.setIcon(result ? R.drawable.ic_favorite_enabled : R.drawable.ic_favorite);
                 Toast.makeText(this, result ? "Added Favorite" : "Removed Favorite", Toast.LENGTH_SHORT).show();
                 break;

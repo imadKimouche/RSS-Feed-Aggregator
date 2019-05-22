@@ -2,6 +2,7 @@ package com.ignite.rssfa;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -39,6 +40,17 @@ public class FavoriteFragment extends Fragment {
             adapter.notifyDataSetChanged();
         });
 
+        mFavoriteList.setOnItemClickListener((parent, view1, position, id) -> {
+            RsskeeArticle article = articleFavoriteList.get(position);
+            openRSSDetail(article);
+        });
+
         return view;
+    }
+
+    private void openRSSDetail(RsskeeArticle article) {
+        Intent intent = new Intent(mContext, RSSDetail.class);
+        intent.putExtra("article", article);
+        startActivity(intent);
     }
 }
