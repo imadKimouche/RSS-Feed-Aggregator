@@ -40,5 +40,8 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="pass_conf_missmatch">Password and confirmation mismatch</string>
     <string name="category_name">Category name</string>
+    <string name="dark_mode">Dark mode</string>
+    <string name="share">Share</string>
+    <string name="authentificating">Authenticating...</string>
 
 </resources>

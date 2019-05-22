@@ -2,12 +2,8 @@ package com.ignite.rssfa;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,15 +12,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ignite.rssfa.db.FavRssViewModel;
-import com.ignite.rssfa.db.entity.RSS;
-
-import java.io.InputStream;
+import com.ignite.rssfa.db.FavArticleViewModel;
 
 public class RSSDetail extends AppCompatActivity {
 
     private RsskeeArticle mArticle;
-    FavRssViewModel mFavRssViewModel;
+    private FavArticleViewModel mFavArticleViewModel;
     private TextView mTitle;
     private TextView mContent;
     private RelativeLayout mBackground;
@@ -48,7 +41,7 @@ public class RSSDetail extends AppCompatActivity {
                 new Utils.DownloadImageTask(mPicture).execute(mArticle.getImage());
             }
         }
-        //mFavRssViewModel = ViewModelProviders.of(this).get(FavRssViewModel.class);
+        mFavArticleViewModel = ViewModelProviders.of(this).get(FavArticleViewModel.class);
     }
 
     @Override
@@ -65,13 +58,13 @@ public class RSSDetail extends AppCompatActivity {
         switch (item.getItemId()) {
 /*            case R.id.ab_save:
                 Toast.makeText(this, "Article Saved", Toast.LENGTH_SHORT).show();
-                break;
+                break;*/
             case R.id.ab_favorite: {
-                Boolean result = mFavRssViewModel.insert(mRss);
+                Boolean result = mFavArticleViewModel.insert(mArticle);
                 item.setIcon(result ? R.drawable.ic_favorite_enabled : R.drawable.ic_favorite);
                 Toast.makeText(this, result ? "Added Favorite" : "Removed Favorite", Toast.LENGTH_SHORT).show();
                 break;
-            }*/
+            }
             case R.id.ab_share: {
                 Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
                 sharingIntent.setType("text/plain");

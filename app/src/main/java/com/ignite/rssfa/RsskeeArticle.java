@@ -1,17 +1,30 @@
 package com.ignite.rssfa;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.prof.rssparser.Article;
 
+@Entity(tableName = "favoriteArticle")
 public class RsskeeArticle implements Parcelable {
+    @PrimaryKey(autoGenerate = true)
+    private int uid;
+    @ColumnInfo(name = "title")
     private String title;
+    @ColumnInfo(name = "description")
     private String description;
+    @ColumnInfo(name = "content")
     private String content;
+    @ColumnInfo(name = "image")
     private String image;
+    @ColumnInfo(name = "pubDate")
     private String pubDate;
+    @ColumnInfo(name = "author")
     private String author;
+    @ColumnInfo(name = "url")
     private String url;
 
     public RsskeeArticle(String title, String description, String content, String image, String pubDate, String author, String url) {
@@ -132,5 +145,13 @@ public class RsskeeArticle implements Parcelable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public int getUid() {
+        return uid;
+    }
+
+    public void setUid(int uid) {
+        this.uid = uid;
     }
 }

@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "71bc808e7c79e374f91681cbafe62bd9",
+    "identityHash": "81e1dc21e44f10703691cb47d9c6662d",
     "entities": [
       {
-        "tableName": "favoriteRss",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `picture` TEXT, `title` TEXT, `text` TEXT)",
+        "tableName": "favoriteArticle",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`uid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT, `description` TEXT, `content` TEXT, `image` TEXT, `pubDate` TEXT, `author` TEXT, `url` TEXT)",
         "fields": [
           {
             "fieldPath": "uid",
@@ -15,20 +15,44 @@
             "notNull": true
           },
           {
-            "fieldPath": "picture",
-            "columnName": "picture",
-            "affinity": "TEXT",
-            "notNull": false
-          },
-          {
             "fieldPath": "title",
             "columnName": "title",
             "affinity": "TEXT",
             "notNull": false
           },
           {
-            "fieldPath": "text",
-            "columnName": "text",
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "content",
+            "columnName": "content",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "image",
+            "columnName": "image",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "pubDate",
+            "columnName": "pubDate",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "author",
+            "columnName": "author",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -107,7 +131,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"71bc808e7c79e374f91681cbafe62bd9\")"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, \"81e1dc21e44f10703691cb47d9c6662d\")"
     ]
   }
 }

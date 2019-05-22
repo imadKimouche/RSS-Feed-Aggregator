@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -44,6 +45,7 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
+import java.util.Objects;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -64,18 +66,20 @@ public class MyAccountFragment extends Fragment {
     private SessionManager mSession;
     private Context mContext;
     private CallbackManager mCallbackManager;
+    private EditText usernameEditText;
+    private EditText passwordEditText;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_account, container, false);
+        mContext = inflater.getContext();
 
         mCallbackManager = CallbackManager.Factory.create();
 
-        EditText usernameEditText = view.findViewById(R.id.username);
-        EditText passwordEditText = view.findViewById(R.id.password);
-        mContext = getActivity().getApplicationContext();
-        mSession = new SessionManager(getActivity().getApplicationContext());
+        usernameEditText = view.findViewById(R.id.username);
+        passwordEditText = view.findViewById(R.id.password);
+        mSession = new SessionManager(mContext);
         mSigninButton = view.findViewById(R.id.signinButton);
         mSigninWithGoogleButton = view.findViewById(R.id.signinWithGoogleButton);
         mSigninWithFacebookButton = view.findViewById(R.id.signinWithFacebookButton);
@@ -85,65 +89,53 @@ public class MyAccountFragment extends Fragment {
         mUsernameLogged = view.findViewById(R.id.usernameLogged);
         mUsernameHolder = view.findViewById(R.id.usernameHolder);
 
+        usernameEditText.addTextChangedListener(watcher);
+        passwordEditText.addTextChangedListener(watcher);
+        mSigninButton.setEnabled(false);
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.server_client_id))
                 .requestEmail()
                 .build();
 
         // Build a GoogleSignInClient with the options specified by gso.
-        mGoogleSignInClient = GoogleSignIn.getClient(getActivity().getApplicationContext(), gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(mContext, gso);
 
-        mSigninButton.setOnClickListener(new View.OnClickListener() {
+        mSigninButton.setOnClickListener(view12 -> {
+            Utils.hideSoftKeyBoard(Objects.requireNonNull(getActivity()));
+            final ProgressDialog progressDialog = new ProgressDialog(mContext,
+                    R.style.com_facebook_auth_dialog);
+            progressDialog.setIndeterminate(true);
+            progressDialog.setMessage(getString(R.string.authentificating));
+            progressDialog.show();
 
-            public void onClick(View view) {
-
-                final ProgressDialog progressDialog = new ProgressDialog(getActivity(),
-                        R.style.com_facebook_auth_dialog);
-                progressDialog.setIndeterminate(true);
-                progressDialog.setMessage("Authenticating...");
-                progressDialog.show();
-
-                mUsername = usernameEditText.getText().toString();
-                mPassword = passwordEditText.getText().toString();
-                new android.os.Handler().postDelayed(
-                        () -> {
-                            if (!mUsername.equals("") && !mPassword.equals("")) {
-
-                                HttpRequest.login(mUsername, mPassword, new AsyncHttpResponseHandler() {
-                                    @Override
-                                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                        Log.i("STATUS CODE", String.valueOf(statusCode));
-                                        try {
-                                            String token = new JSONObject(new String(responseBody)).getString("token");
-                                            mSession.createLoginSession(mUsername, token);
-                                            updateUI("", mUsername, true);
-                                            progressDialog.dismiss();
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-
-                                    @Override
-                                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                                        progressDialog.dismiss();
-                                        Utils.longToast(mContext, "Authentification failed! Wrong username or password!");
-                                    }
-                                });
-                            } else {
-                                Utils.longToast(mContext, "Username or Password shouldn't be empty!");
-                                progressDialog.dismiss();
+            mUsername = usernameEditText.getText().toString();
+            mPassword = passwordEditText.getText().toString();
+            new android.os.Handler().postDelayed(
+                    () -> {
+                        HttpRequest.login(mUsername, mPassword, new AsyncHttpResponseHandler() {
+                            @Override
+                            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                                Log.i("STATUS CODE", String.valueOf(statusCode));
+                                try {
+                                    String token = new JSONObject(new String(responseBody)).getString("token");
+                                    mSession.createLoginSession(mUsername, token);
+                                    updateUI("", mUsername, true);
+                                    progressDialog.dismiss();
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                        }, 3000);
-            }
+
+                            @Override
+                            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                                progressDialog.dismiss();
+                                Utils.longToast(mContext, "Authentification failed! Wrong username or password!");
+                            }
+                        });
+                    }, 3000);
         });
 
-        mSigninWithGoogleButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View view) {
-                signInWithGoogle();
-            }
-        });
+        mSigninWithGoogleButton.setOnClickListener(view1 -> signInWithGoogle());
 
 
         mSigninWithFacebookButton.setPermissions(Arrays.asList("public_profile", "email"));
@@ -156,17 +148,14 @@ public class MyAccountFragment extends Fragment {
                 String token = loginResult.getAccessToken().getToken();
                 GraphRequest request = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(),
-                        new GraphRequest.GraphJSONObjectCallback() {
-                            @Override
-                            public void onCompleted(JSONObject object, GraphResponse response) {
-                                Log.v("LoginActivity", response.toString());
-                                try {
-                                    String email = object.getString("email");
-                                    String name = object.getString("name");
-                                    handleSignInResult(name, email, token);
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
+                        (object, response) -> {
+                            Log.v("LoginActivity", response.toString());
+                            try {
+                                String email = object.getString("email");
+                                String name = object.getString("name");
+                                handleSignInResult(name, email, token);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                         });
                 Bundle parameters = new Bundle();
@@ -212,6 +201,25 @@ public class MyAccountFragment extends Fragment {
 
         return view;
     }
+
+    private final TextWatcher watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (usernameEditText.getText().toString().length() == 0 || passwordEditText.getText().toString().length() == 0) {
+                mSigninButton.setEnabled(false);
+            } else {
+                mSigninButton.setEnabled(true);
+            }
+        }
+    };
 
     private void signInWithGoogle() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
@@ -259,7 +267,7 @@ public class MyAccountFragment extends Fragment {
 
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                HttpRequest.createUser(getActivity().getApplicationContext(), name, email, token.substring(0, 15), new AsyncHttpResponseHandler() {
+                HttpRequest.createUser(mContext, name, email, token.substring(0, 15), new AsyncHttpResponseHandler() {
                     @Override
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         Log.i("DG", "creating google user");
@@ -327,8 +335,8 @@ public class MyAccountFragment extends Fragment {
 
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
-        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(getActivity().getApplicationContext());
-        mSession = new SessionManager(getActivity().getApplicationContext());
+        GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(mContext);
+        mSession = new SessionManager(mContext);
         if (account != null) {
             updateUI(account.getEmail(), account.getDisplayName(), true);
         } else if (mSession.isLoggedIn()) {
@@ -339,7 +347,7 @@ public class MyAccountFragment extends Fragment {
     }
 
     private void requirePassword(String username, String email) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         builder.setTitle("Create Account");
         Activity activity = getActivity();
         final TextView usernameText = new TextView(activity);

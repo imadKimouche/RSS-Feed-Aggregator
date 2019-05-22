@@ -10,16 +10,17 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 
 import com.ignite.rssfa.Converters;
+import com.ignite.rssfa.RsskeeArticle;
+import com.ignite.rssfa.db.dao.FavoriteArticleDao;
 import com.ignite.rssfa.db.dao.MyFeedsDao;
-import com.ignite.rssfa.db.entity.RSS;
 import com.ignite.rssfa.db.entity.Feed;
 
-@Database(entities = {RSS.class, Feed.class}, version = 1)
+@Database(entities = {RsskeeArticle.class, Feed.class}, version = 1)
 @TypeConverters(Converters.class)
 public abstract class AppDatabase extends RoomDatabase {
 
     private static AppDatabase sInstance;
-    public abstract com.ignite.rssfa.db.dao.FavoriteRssDao FavRssDao();
+    public abstract FavoriteArticleDao FavArticleDao();
     public abstract MyFeedsDao MyFeedsDao();
     public static final String DATABASE_NAME = "rsskee-db";
 
@@ -48,16 +49,16 @@ public abstract class AppDatabase extends RoomDatabase {
 
     private static class PopulateDbAsync extends AsyncTask<Void, Void, Void> {
 
-        private final com.ignite.rssfa.db.dao.FavoriteRssDao mDao;
+        private final FavoriteArticleDao mDao;
 
         PopulateDbAsync(AppDatabase db) {
-            mDao = db.FavRssDao();
+            mDao = db.FavArticleDao();
         }
 
         @Override
         protected Void doInBackground(final Void... params) {
-            RSS rss = new RSS("rss", "rss", "rss");
-            mDao.insert(rss);
+            RsskeeArticle article = new RsskeeArticle("", "", "", "", "", "", "");
+            mDao.insert(article);
             return null;
         }
     }

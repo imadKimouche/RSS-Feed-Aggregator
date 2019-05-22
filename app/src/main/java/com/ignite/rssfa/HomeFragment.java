@@ -1,5 +1,6 @@
 package com.ignite.rssfa;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -31,17 +32,18 @@ public class HomeFragment extends Fragment {
     ListView mFeedList;
     List<RsskeeArticle> articleList = new ArrayList<>();
     List<Topic> mTopics = new ArrayList<>();
+    private Context mContext;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
-
+        mContext = inflater.getContext();
         mFeedList = view.findViewById(R.id.feedList);
         RecyclerView rv = view.findViewById(R.id.topicsList);
-        rv.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        rv.setLayoutManager(new LinearLayoutManager(mContext, LinearLayoutManager.HORIZONTAL, false));
         mTopics = Utils.fillTopics();
-        TopicsAdapter adapterTopic = new TopicsAdapter(getActivity(), mTopics);
+        TopicsAdapter adapterTopic = new TopicsAdapter(mContext, mTopics);
         rv.setAdapter(adapterTopic);
         rv.setHasFixedSize(true);
         rv.setItemViewCacheSize(20);
@@ -77,11 +79,11 @@ public class HomeFragment extends Fragment {
                         String desc = content.substring(0, (content.length() > 100) ? 100 : content.length());
                         RsskeeArticle articleToLoad = new RsskeeArticle(article.get("title").toString(), desc, content, "", "", article.get("author").toString(), article.get("link").toString());
                         articleList.add(articleToLoad);
-                        ArticleAdapter adapter = new ArticleAdapter(getActivity(), articleList);
+                        ArticleAdapter adapter = new ArticleAdapter(mContext, articleList);
                         mFeedList.setAdapter(adapter);
                     }
                 } catch (JSONException e) {
-                    Utils.shortToast(getActivity(), "Couldn't get the articles!");
+                    Utils.shortToast(mContext, "Couldn't get the articles!");
                     e.printStackTrace();
                 }
             }
@@ -107,7 +109,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void openRSSDetail(RsskeeArticle article) {
-        Intent intent = new Intent(getActivity(), RSSDetail.class);
+        Intent intent = new Intent(mContext, RSSDetail.class);
         intent.putExtra("article", article);
         startActivity(intent);
     }
@@ -125,7 +127,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void openFeedDetail(com.ignite.rssfa.db.entity.Feed feed) {
-        Intent intent = new Intent(getActivity(), MyFeedsFragment.class);
+        Intent intent = new Intent(mContext, MyFeedsFragment.class);
         startActivity(intent);
     }
 }

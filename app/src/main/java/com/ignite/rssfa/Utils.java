@@ -1,11 +1,13 @@
 package com.ignite.rssfa;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -14,6 +16,8 @@ import com.ignite.rssfa.db.entity.Feed;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static android.content.Context.INPUT_METHOD_SERVICE;
 
 public class Utils {
     public static void longToast(Context context, String message) {
@@ -75,6 +79,14 @@ public class Utils {
 
         protected void onPostExecute(Bitmap result) {
             bmImage.setImageBitmap(result);
+        }
+    }
+
+    public static void hideSoftKeyBoard(Activity activity) {
+        InputMethodManager imm = (InputMethodManager) activity.getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
+
+        if (imm.isAcceptingText()) { // verify if the soft keyboard is open
+            imm.hideSoftInputFromWindow(activity.getCurrentFocus().getWindowToken(), 0);
         }
     }
 }

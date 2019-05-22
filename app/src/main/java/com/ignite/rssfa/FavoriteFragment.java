@@ -1,19 +1,17 @@
 package com.ignite.rssfa;
 
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.ignite.rssfa.db.FavRssViewModel;
-import com.ignite.rssfa.db.entity.RSS;
+import com.ignite.rssfa.db.FavArticleViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,25 +19,24 @@ import java.util.List;
 public class FavoriteFragment extends Fragment {
 
     ListView mFavoriteList;
-    List<RSS> rssFavoriteList = new ArrayList<>();
+    List<RsskeeArticle> articleFavoriteList = new ArrayList<>();
+    private Context mContext;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_favorite, container, false);
+        mContext = inflater.getContext();
         mFavoriteList = view.findViewById(R.id.favoriteList);
-        RSSAdapter adapter = new RSSAdapter(getActivity().getApplicationContext(), rssFavoriteList);
+        ArticleAdapter adapter = new ArticleAdapter(mContext, articleFavoriteList);
         mFavoriteList.setAdapter(adapter);
 
-        FavRssViewModel mFavRssViewModel = ViewModelProviders.of(this).get(FavRssViewModel.class);
-        mFavRssViewModel.getAllFavRss().observe(this, new Observer<List<RSS>>() {
-            @Override
-            public void onChanged(@Nullable List<RSS> rssList) {
+        FavArticleViewModel mFavRssViewModel = ViewModelProviders.of(this).get(FavArticleViewModel.class);
+        mFavRssViewModel.getAllFavRss().observe(this, articles -> {
 
-                rssFavoriteList.clear();
-                rssFavoriteList.addAll(rssList);
-                adapter.notifyDataSetChanged();
-            }
+            articleFavoriteList.clear();
+            articleFavoriteList.addAll(articles);
+            adapter.notifyDataSetChanged();
         });
 
         return view;

@@ -3,33 +3,33 @@ package com.ignite.rssfa.db;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
-import android.util.Log;
 
-import com.ignite.rssfa.db.entity.RSS;
+import com.ignite.rssfa.RsskeeArticle;
+import com.ignite.rssfa.db.FavArticleRepository;
 
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public class FavRssViewModel extends AndroidViewModel {
+public class FavArticleViewModel extends AndroidViewModel {
 
-    private com.ignite.rssfa.db.FavRssRepository mRepository;
+    private FavArticleRepository mRepository;
 
-    private LiveData<List<RSS>> mFavRssList;
+    private LiveData<List<RsskeeArticle>> mFavArticles;
 
-    public FavRssViewModel(Application application) {
+    public FavArticleViewModel(Application application) {
         super(application);
-        mRepository = new com.ignite.rssfa.db.FavRssRepository(application);
-        mFavRssList = mRepository.getAllFavRss();
+        mRepository = new FavArticleRepository(application);
+        mFavArticles = mRepository.getAllFavArticles();
     }
 
-    public LiveData<List<RSS>> getAllFavRss() {
-        return mFavRssList;
+    public LiveData<List<RsskeeArticle>> getAllFavRss() {
+        return mFavArticles;
     }
 
-    public Boolean insert(RSS rss) {
+    public Boolean insert(RsskeeArticle article) {
         Boolean result = false;
         try {
-            result = mRepository.insert(rss);
+            result = mRepository.insert(article);
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {
@@ -38,10 +38,10 @@ public class FavRssViewModel extends AndroidViewModel {
         return result;
     }
 
-    public Boolean exists(RSS rss) {
+    public Boolean exists(RsskeeArticle article) {
         Boolean result = false;
         try {
-            result = mRepository.RssFavExists(rss);
+            result = mRepository.articleFavExists(article);
         } catch (ExecutionException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

@@ -3,6 +3,7 @@ package com.ignite.rssfa;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -46,16 +47,18 @@ public class MyFeedsFragment extends Fragment {
     FloatingActionButton mAddFeed;
     private String mUrl;
     private boolean fromHome;
+    private Context mContext;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_myfeeds, container, false);
+        mContext = inflater.getContext();
         mFeedList = view.findViewById(R.id.feedList);
-        FeedAdapter adapter = new FeedAdapter(getActivity(), feedList);
+        FeedAdapter adapter = new FeedAdapter(mContext, feedList);
         mFeedList.setAdapter(adapter);
         mAddFeed = view.findViewById(R.id.add_feed);
-        SessionManager sessionManager = new SessionManager(getActivity());
+        SessionManager sessionManager = new SessionManager(mContext);
         fromHome = this.getArguments() != null && this.getArguments().getParcelableArrayList("feeds") != null;
         if (fromHome) {
             feedList = this.getArguments().getParcelableArrayList("feeds");
@@ -112,7 +115,7 @@ public class MyFeedsFragment extends Fragment {
                         Utils.logError(new Object() {
                         }.getClass().getName(), statusCode, new String(responseBody));
                         if (statusCode == 401) {
-                            Utils.longToast(getActivity(), getResources().getString(R.string.Login_expired));
+                            Utils.longToast(mContext, getResources().getString(R.string.Login_expired));
                         }
                     }
                 });
@@ -178,7 +181,7 @@ public class MyFeedsFragment extends Fragment {
 
         mFeedList.setOnItemLongClickListener((parent, view12, position, id) -> {
             Feed feed = feedList.get(position);
-            AlertDialog.Builder adb = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder adb = new AlertDialog.Builder(mContext);
             adb.setTitle(getResources().getString(R.string.delete));
             adb.setMessage(getResources().getString(R.string.are_you_sure_you_want_to_delete) + feed.getTitle());
             final int positionToRemove = position;
@@ -189,7 +192,7 @@ public class MyFeedsFragment extends Fragment {
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         feedList.remove(positionToRemove);
                         adapter.notifyDataSetChanged();
-                        Utils.shortToast(getActivity().getApplicationContext(), getResources().getString(R.string.feed_has_been_removed));
+                        Utils.shortToast(mContext, getResources().getString(R.string.feed_has_been_removed));
                         Log.i("OnSuccess", new String(responseBody));
                     }
 
@@ -205,15 +208,15 @@ public class MyFeedsFragment extends Fragment {
         });
 
         mAddFeed.setOnClickListener(v -> {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setTitle(getResources().getString(R.string.add_rss_feed_link));
 
-            final EditText input = new EditText(getActivity());
+            final EditText input = new EditText(mContext);
             input.setInputType(InputType.TYPE_CLASS_TEXT);
             builder.setView(input);
 
             builder.setPositiveButton("OK", (dialog, which) -> {
-                final ProgressDialog progressDialog = new ProgressDialog(getActivity(),
+                final ProgressDialog progressDialog = new ProgressDialog(mContext,
                         R.style.com_facebook_auth_dialog);
                 progressDialog.setIndeterminate(true);
                 progressDialog.setMessage(getResources().getString(R.string.adding_rss_feed));
@@ -221,7 +224,7 @@ public class MyFeedsFragment extends Fragment {
                 mUrl = input.getText().toString();
                 if (sessionManager.checkLogin()) {
                     String token = sessionManager.getUserDetails().get(SessionManager.KEY_access_token);
-                    HttpRequest.addFeed(getActivity().getApplicationContext(), token, mUrl, new AsyncHttpResponseHandler() {
+                    HttpRequest.addFeed(mContext, token, mUrl, new AsyncHttpResponseHandler() {
                         @Override
                         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                             try {
@@ -238,19 +241,19 @@ public class MyFeedsFragment extends Fragment {
                                 e.printStackTrace();
                             }
                             progressDialog.dismiss();
-                            Utils.shortToast(getActivity(), getString(R.string.rss_feed_added));
+                            Utils.shortToast(mContext, getString(R.string.rss_feed_added));
                         }
 
                         @Override
                         public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                             Log.w("failed", new String(responseBody));
                             progressDialog.dismiss();
-                            Utils.shortToast(getActivity(), getString(R.string.failed_to_add_link));
+                            Utils.shortToast(mContext, getString(R.string.failed_to_add_link));
                         }
                     });
                 } else {
                     progressDialog.dismiss();
-                    Utils.shortToast(getActivity(), getString(R.string.login_first));
+                    Utils.shortToast(mContext, getString(R.string.login_first));
                 }
             });
             builder.setNegativeButton(getString(R.string.cancel), (dialog, which) -> dialog.cancel());
@@ -262,7 +265,7 @@ public class MyFeedsFragment extends Fragment {
     }
 
     private void openFeedDetail(Feed feed) {
-        Intent intent = new Intent(getActivity(), FeedDetail.class);
+        Intent intent = new Intent(mContext, FeedDetail.class);
         intent.putExtra("feed", feed);
         startActivity(intent);
     }
