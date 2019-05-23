@@ -1,13 +1,20 @@
 apply plugin: 'com.android.application'
 
+ext.versionMajor = 0
+ext.versionMinor = 0
+ext.versionPatch = 0
+ext.versionClassifier = null
+ext.isSnapshot = true
+ext.minimumSdkVersion = 15
+
 android {
     compileSdkVersion 28
     defaultConfig {
         applicationId "com.ignite.rssfa"
-        minSdkVersion 15
         targetSdkVersion 28
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion project.ext.minimumSdkVersion
+        versionCode generateVersionCode() // 190010203
+        versionName generateVersionName() // 1.2.3-SNAPSHOT
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -38,6 +45,22 @@ android {
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
+}
+
+private Integer generateVersionCode() {
+    return ext.minimumSdkVersion * 10000000 + ext.versionMajor * 10000 + ext.versionMinor * 100 + ext.versionPatch
+}
+
+private String generateVersionName() {
+    String versionName = "${ext.versionMajor}.${ext.versionMinor}.${ext.versionPatch}"
+    if (ext.versionClassifier == null && ext.isSnapshot) {
+        ext.versionClassifier = "SNAPSHOT"
+    }
+
+    if (ext.versionClassifier != null) {
+        versionName += "-" + ext.versionClassifier
+    }
+    return versionName;
 }
 
 dependencies {

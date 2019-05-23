@@ -7,8 +7,6 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.ignite.rssfa.db.entity.Feed;
@@ -52,6 +50,9 @@ public class FeedDetail extends AppCompatActivity {
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 JSONObject feedObj;
                 try {
+                    if (responseBody.length == 0) {
+                        return;
+                    }
                     feedObj = new JSONObject(new String(responseBody));
                     JSONArray articles = feedObj.getJSONArray("items");
                     RsskeeArticle article;

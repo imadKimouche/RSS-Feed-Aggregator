@@ -3,9 +3,11 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/ab_darkMode"
-        android:icon="@drawable/ic_darkmode"
-        android:title="@string/dark_mode"
+        android:id="@+id/switchDM"
+        android:enabled="true"
+        android:title=""
+        android:visible="true"
+        app:actionLayout="@layout/show_protected_switch"
         app:showAsAction="always" />
 
     <item

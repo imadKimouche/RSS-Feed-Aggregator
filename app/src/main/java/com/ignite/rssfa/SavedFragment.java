@@ -42,18 +42,6 @@ public class SavedFragment extends Fragment {
             adapter.notifyDataSetChanged();
         });
 
-        mSavedList.setOnItemClickListener((parent, view1, position, id) -> {
-            RsskeeArticleSaved article = articleSavedList.get(position);
-            openRSSDetail(article);
-        });
-
         return view;
-    }
-
-    private void openRSSDetail(RsskeeArticleSaved savedArticle) {
-        RsskeeArticle article = new RsskeeArticle(savedArticle);
-        Intent intent = new Intent(mContext, RSSDetail.class);
-        intent.putExtra("article", article);
-        startActivity(intent);
     }
 }

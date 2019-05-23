@@ -40,17 +40,6 @@ public class FavoriteFragment extends Fragment {
             adapter.notifyDataSetChanged();
         });
 
-        mFavoriteList.setOnItemClickListener((parent, view1, position, id) -> {
-            RsskeeArticle article = articleFavoriteList.get(position);
-            openRSSDetail(article);
-        });
-
         return view;
-    }
-
-    private void openRSSDetail(RsskeeArticle article) {
-        Intent intent = new Intent(mContext, RSSDetail.class);
-        intent.putExtra("article", article);
-        startActivity(intent);
     }
 }

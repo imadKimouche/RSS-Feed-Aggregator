@@ -1,8 +1,7 @@
 package com.ignite.rssfa;
 
-import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,23 +9,19 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
@@ -36,8 +31,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.ignite.rssfa.db.AlreadyReadViewModel;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 
 import org.json.JSONException;
@@ -68,6 +63,11 @@ public class MyAccountFragment extends Fragment {
     private CallbackManager mCallbackManager;
     private EditText usernameEditText;
     private EditText passwordEditText;
+    private TextView mReadCount;
+    private TextView mReadCountHolder;
+    private AlreadyReadViewModel mAlreadyReadViewModel;
+    private TextView mSignup;
+    private static final int REQUEST_SIGNUP = 0;
 
     @Nullable
     @Override
@@ -88,7 +88,12 @@ public class MyAccountFragment extends Fragment {
         mEmailHolder = view.findViewById(R.id.emailHolder);
         mUsernameLogged = view.findViewById(R.id.usernameLogged);
         mUsernameHolder = view.findViewById(R.id.usernameHolder);
+        mReadCount = view.findViewById(R.id.readCount);
+        mReadCountHolder = view.findViewById(R.id.readCountHolder);
+        mAlreadyReadViewModel = ViewModelProviders.of(this).get(AlreadyReadViewModel.class);
+        mSignup = view.findViewById(R.id.signup);
 
+        mReadCount.setText(String.valueOf(mAlreadyReadViewModel.count()));
         usernameEditText.addTextChangedListener(watcher);
         passwordEditText.addTextChangedListener(watcher);
         mSigninButton.setEnabled(false);
@@ -103,7 +108,7 @@ public class MyAccountFragment extends Fragment {
         mSigninButton.setOnClickListener(view12 -> {
             Utils.hideSoftKeyBoard(Objects.requireNonNull(getActivity()));
             final ProgressDialog progressDialog = new ProgressDialog(mContext,
-                    R.style.com_facebook_auth_dialog);
+                    R.style.MyDialogTheme);
             progressDialog.setIndeterminate(true);
             progressDialog.setMessage(getString(R.string.authentificating));
             progressDialog.show();
@@ -141,7 +146,6 @@ public class MyAccountFragment extends Fragment {
         mSigninWithFacebookButton.setPermissions(Arrays.asList("public_profile", "email"));
         mSigninWithFacebookButton.setFragment(this);
 
-        // Callback registration
         mSigninWithFacebookButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
             @Override
             public void onSuccess(LoginResult loginResult) {
@@ -149,7 +153,6 @@ public class MyAccountFragment extends Fragment {
                 GraphRequest request = GraphRequest.newMeRequest(
                         loginResult.getAccessToken(),
                         (object, response) -> {
-                            Log.v("LoginActivity", response.toString());
                             try {
                                 String email = object.getString("email");
                                 String name = object.getString("name");
@@ -177,26 +180,18 @@ public class MyAccountFragment extends Fragment {
         });
 
 
-        mSigninWithFacebookButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile"));
+        mSigninWithFacebookButton.setOnClickListener(v -> LoginManager.getInstance().logInWithReadPermissions(getActivity(), Arrays.asList("public_profile")));
+
+        mSingOutButton.setOnClickListener(view13 -> {
+            if (mSession.isLoggedIn()) {
+                mSession.logoutUser();
             }
+            mGoogleSignInClient.signOut().addOnCompleteListener(task -> updateUI("", "", false));
         });
 
-        mSingOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (mSession.isLoggedIn()) {
-                    mSession.logoutUser();
-                }
-                mGoogleSignInClient.signOut().addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        updateUI("", "", false);
-                    }
-                });
-            }
+        mSignup.setOnClickListener(v -> {
+            Intent intent = new Intent(mContext, SignupActivity.class);
+            startActivityForResult(intent, REQUEST_SIGNUP);
         });
 
         return view;
@@ -251,7 +246,11 @@ public class MyAccountFragment extends Fragment {
     }
 
     private void handleSignInResult(String name, String email, String token) {
-        //requirePassword(name, email);
+        final ProgressDialog progressDialog = new ProgressDialog(mContext,
+                R.style.MyDialogTheme);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage(getString(R.string.authentificating));
+        progressDialog.show();
         HttpRequest.login(name, token.substring(0, 15), new AsyncHttpResponseHandler() {
             @Override
             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -262,7 +261,7 @@ public class MyAccountFragment extends Fragment {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
+                progressDialog.dismiss();
             }
 
             @Override
@@ -287,20 +286,22 @@ public class MyAccountFragment extends Fragment {
                         }
                         Utils.shortToast(mContext, "Server Error: Couldn't add user");
                         updateUI("", "", false);
+                        progressDialog.dismiss();
                     }
                 });
-
             }
         });
     }
 
     private void updateUI(String email, String username, boolean isLoggedIn) {
-        if (isLoggedIn) {
+        if (Utils.isNetworkAvailable(mContext) && isLoggedIn) {
             mUsernameLogged.setVisibility(View.VISIBLE);
             mSingOutButton.setVisibility(View.VISIBLE);
             mSigninButton.setVisibility(View.GONE);
             mEmailHolder.setVisibility(View.VISIBLE);
             mUsernameHolder.setVisibility(View.VISIBLE);
+            mReadCountHolder.setVisibility(View.VISIBLE);
+            mReadCount.setVisibility(View.VISIBLE);
             if (!email.equals("")) {
                 mEmail.setText(email);
             } else {
@@ -321,6 +322,8 @@ public class MyAccountFragment extends Fragment {
             mSigninButton.setVisibility(View.VISIBLE);
             mEmailHolder.setVisibility(View.GONE);
             mUsernameHolder.setVisibility(View.GONE);
+            mReadCount.setVisibility(View.GONE);
+            mReadCountHolder.setVisibility(View.GONE);
             mEmail.setVisibility(View.GONE);
             mSigninWithGoogleButton.setVisibility(View.VISIBLE);
             mSigninWithFacebookButton.setVisibility(View.VISIBLE);
@@ -345,70 +348,4 @@ public class MyAccountFragment extends Fragment {
             updateUI("", "", false);
         }
     }
-
-    private void requirePassword(String username, String email) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-        builder.setTitle("Create Account");
-        Activity activity = getActivity();
-        final TextView usernameText = new TextView(activity);
-        final TextView emailText = new TextView(activity);
-        final EditText inputPasswrod = new EditText(activity);
-        final EditText inputConfirm = new EditText(activity);
-        final TextView error = new TextView(activity);
-        final TextView passwordText = new TextView(activity);
-        final TextView confirmText = new TextView(activity);
-        final LinearLayout layout = new LinearLayout(activity);
-        passwordText.setText(getString(R.string.password));
-        confirmText.setText(getString(R.string.confirm_password));
-        usernameText.setText(String.format("%s %s", getString(R.string.username), username));
-        emailText.setText(String.format("%s %s", getString(R.string.email), email));
-        layout.setOrientation(LinearLayout.VERTICAL);
-
-        inputPasswrod.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        inputConfirm.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-        error.setText(getString(R.string.pass_conf_missmatch));
-        error.setTextColor(getResources().getColor(R.color.colorError));
-        error.setVisibility(View.GONE);
-        layout.addView(usernameText);
-        layout.addView(emailText);
-        layout.addView(passwordText);
-        layout.addView(inputPasswrod);
-        layout.addView(confirmText);
-        layout.addView(inputConfirm);
-        layout.addView(error);
-        builder.setView(layout);
-
-        builder.setPositiveButton("Done", (dialog, which) -> {
-
-        });
-        builder.setNegativeButton("Cancel", (dialog, which) -> dialog.cancel());
-
-        AlertDialog dialog = builder.create();
-        inputConfirm.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                final Button okButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE);
-                if (!inputPasswrod.getText().toString().equals(inputConfirm.getText().toString())) {
-                    error.setVisibility(View.VISIBLE);
-                    okButton.setEnabled(false);
-                } else {
-                    error.setVisibility(View.GONE);
-                    okButton.setEnabled(true);
-                }
-            }
-        });
-        dialog.show();
-        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
-    }
-
 }

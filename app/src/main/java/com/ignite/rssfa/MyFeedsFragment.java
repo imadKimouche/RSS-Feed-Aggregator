@@ -2,9 +2,7 @@ package com.ignite.rssfa;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -18,12 +16,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.ignite.rssfa.db.MyFeedsViewModel;
 import com.ignite.rssfa.db.entity.Feed;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.prof.rssparser.Article;
@@ -38,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import cz.msebera.android.httpclient.Header;
-import okhttp3.internal.Util;
 
 public class MyFeedsFragment extends Fragment {
 
@@ -54,6 +48,7 @@ public class MyFeedsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_myfeeds, container, false);
         mContext = inflater.getContext();
+
         mFeedList = view.findViewById(R.id.feedList);
         FeedAdapter adapter = new FeedAdapter(mContext, feedList);
         mFeedList.setAdapter(adapter);
@@ -67,8 +62,7 @@ public class MyFeedsFragment extends Fragment {
             mAddFeed.hide();
         } else {
             mAddFeed.show();
-//            MyFeedsViewModel mFeedsViewModel = ViewModelProviders.of(this).get(MyFeedsViewModel.class);
-            if (sessionManager.checkLogin()) {
+            if (Utils.isNetworkAvailable(mContext) && sessionManager.checkLogin()) {
                 final ProgressDialog progressDialog = new ProgressDialog(mContext, R.style.Spinner);
                 progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
                 progressDialog.setIndeterminate(true);
@@ -133,16 +127,7 @@ public class MyFeedsFragment extends Fragment {
             }
         }
 
-        /*mFeedsViewModel.getAllFeeds().observe(this, new Observer<List<Feed>>() {
-            @Override
-            public void onChanged(@Nullable List<Feed> feeds) {
 
-                feedList.clear();
-                feedList.addAll(feeds);
-                adapter.notifyDataSetChanged();
-            }
-        });
-*/
         mFeedList.setOnItemClickListener((parent, view1, position, id) -> {
             Feed feed = feedList.get(position);
             openFeedDetail(feed, sessionManager.getUserDetails().get(SessionManager.KEY_access_token));
@@ -176,7 +161,12 @@ public class MyFeedsFragment extends Fragment {
             return true;
         });
 
+
         mAddFeed.setOnClickListener(v -> {
+            if (!Utils.isNetworkAvailable(mContext)) {
+                Utils.longToast(mContext, getString(R.string.no_network_available));
+                return;
+            }
             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
             builder.setTitle(getResources().getString(R.string.add_rss_feed_link));
 
@@ -186,7 +176,7 @@ public class MyFeedsFragment extends Fragment {
 
             builder.setPositiveButton("OK", (dialog, which) -> {
                 final ProgressDialog progressDialog = new ProgressDialog(mContext,
-                        R.style.com_facebook_auth_dialog);
+                        R.style.MyDialogTheme);
                 progressDialog.setIndeterminate(true);
                 progressDialog.setMessage(getResources().getString(R.string.adding_rss_feed));
                 progressDialog.show();

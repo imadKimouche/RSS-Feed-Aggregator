@@ -44,5 +44,19 @@
     <string name="share">Share</string>
     <string name="authentificating">Authenticating...</string>
     <string name="visit_website">Visit Website</string>
+    <string name="added_favorite">Added Favorite</string>
+    <string name="article_saved_for_later">Article Saved For Later</string>
+    <string name="add_favorite">Add Favorite</string>
+    <string name="save_for_later">Save For Later</string>
+    <string name="articles_read">Articles read:</string>
+    <string name="no_network_available">No Network Available</string>
+    <string name="don_t_have_an_account">Don\'t have an account?</string>
+    <string name="creating_account">Creating Account...</string>
+    <string name="at_least_3_characters">at least 3 characters</string>
+    <string name="enter_a_valid_email">enter a valid email address</string>
+    <string name="between_4_and_10_alphanum_char">between 4 and 10 alphanumeric characters</string>
+    <string name="create_account">Create Account</string>
+    <string name="already_a_member_login">Already a member? Login</string>
+    <string name="name">Name</string>
 
 </resources>

@@ -37,6 +37,22 @@
     <string name="category_name">Nom de la catégorie</string>
     <string name="dark_mode">Mode sombre</string>
     <string name="share">Partager</string>
-    <string name="authentificating">Authentification...</string>
+    <string name="authentificating">Authentification…</string>
     <string name="visit_website">Visiter le site web</string>
+    <string name="add_favorite">Ajouter aux favoris</string>
+    <string name="added_favorite">Favori ajouté</string>
+    <string name="article_saved_for_later">Article enregistré pour plus tard</string>
+    <string name="articles_read">Articles lus</string>
+    <string name="no_network_available">Pas de réseau disponible</string>
+    <string name="save_for_later">Enregistrer pour plus tard</string>
+    <string name="don_t_have_an_account">Vous n\'avez pas de compte?</string>
+    <string name="creating_account">Création de compte…</string>
+    <string name="at_least_3_characters">au moins 3 caractères</string>
+    <string name="enter_a_valid_email">entrez une adresse mail valide</string>
+    <string name="between_4_and_10_alphanum_char">entre 4 et 10 caractères alphanumériques</string>
+    <string name="create_account">Créer un compte</string>
+    <string name="already_a_member_login">Déjà membre? S\'identifier</string>
+    <string name="name">Nom d\'utilisateur</string>
+
+
 </resources>

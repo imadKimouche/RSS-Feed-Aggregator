@@ -27,47 +27,6 @@ final class HttpRequest {
         this.mContext = mContext;
     }
 
-    public static void getTopics(final Callback<List<String>> callback) {
-
-        List<String> topics = new ArrayList<>();
-        client.addHeader("Accept", "application/json");
-        client.addHeader("APPID", "5f04e579");
-        client.addHeader("APPSECRET", "439447ba1cd991c7bfcc4f04ddb9ab0f");
-        client.get(getAbsoluteUrl("topics"), new AsyncHttpResponseHandler() {
-
-            @Override
-            public void onStart() {
-
-            }
-
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                Log.i("STATUS CODE", String.valueOf(statusCode));
-                try {
-                    JSONArray array = new JSONObject(new String(responseBody)).getJSONArray("standard");
-                    for (int i = 0; i < array.length(); i++) {
-                        topics.add((String) ((JSONObject) array.get(i)).get("name"));
-                    }
-                    if (callback != null) {
-                        callback.onResponse(topics);
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onFailure(int statusCode, cz.msebera.android.httpclient.Header[] headers, byte[] responseBody, Throwable error) {
-                callback.onResponse(null);
-            }
-
-            @Override
-            public void onRetry(int retryNo) {
-                // called when request is retried
-            }
-        });
-    }
-
     public static void login(String username, String password, AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
         params.put("login", username);
@@ -133,7 +92,6 @@ final class HttpRequest {
         client.addHeader("token", token);
         client.get(getAbsoluteUrl("feeds/" + id), handler);
     }
-
 
 
     private static String getAbsoluteUrl(String relativeUrl) {
