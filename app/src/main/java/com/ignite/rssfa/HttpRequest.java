@@ -21,11 +21,6 @@ import cz.msebera.android.httpclient.entity.StringEntity;
 final class HttpRequest {
     private static final String BASE_URL = "http://rsskeyapi.eu-west-3.elasticbeanstalk.com/";
     private static AsyncHttpClient client = new AsyncHttpClient();
-    private Context mContext;
-
-    HttpRequest(Context mContext) {
-        this.mContext = mContext;
-    }
 
     public static void login(String username, String password, AsyncHttpResponseHandler handler) {
         RequestParams params = new RequestParams();
@@ -88,7 +83,6 @@ final class HttpRequest {
 
     public static void getFeed(int id, String token, AsyncHttpResponseHandler handler) {
         client.removeAllHeaders();
-        client.setConnectTimeout(30000);
         client.addHeader("token", token);
         client.get(getAbsoluteUrl("feeds/" + id), handler);
     }

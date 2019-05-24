@@ -70,6 +70,10 @@ public class MyFeedsFragment extends Fragment {
                     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                         try {
                             JSONArray feeds = new JSONArray(new String(responseBody));
+                            if (feeds.length() == 0) {
+                                progressDialog.dismiss();
+                                return;
+                            }
                             for (int i = 0; i < feeds.length(); i++) {
                                 JSONObject feedObj = feeds.getJSONObject(i);
                                 Feed feed = new Feed(feedObj.getInt("id"), feedObj.get("title").toString(), feedObj.get("link").toString(),

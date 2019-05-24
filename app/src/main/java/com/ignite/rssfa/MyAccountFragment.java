@@ -121,11 +121,12 @@ public class MyAccountFragment extends Fragment {
                         HttpRequest.login(mUsername, mPassword, new AsyncHttpResponseHandler() {
                             @Override
                             public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                                Log.i("STATUS CODE", String.valueOf(statusCode));
                                 try {
                                     String token = new JSONObject(new String(responseBody)).getString("token");
+                                    String username = new JSONObject(new String(responseBody)).getString("login");
+                                    String email = new JSONObject(new String(responseBody)).getString("email");
                                     mSession.createLoginSession(mUsername, token);
-                                    updateUI("", mUsername, true);
+                                    updateUI(email, username, true);
                                     progressDialog.dismiss();
                                 } catch (JSONException e) {
                                     e.printStackTrace();
@@ -279,12 +280,8 @@ public class MyAccountFragment extends Fragment {
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                         Log.w("Google user server auth", "signInResult:failed code=" + statusCode);
-                        try {
-
-                            String str = new String(responseBody, "UTF-8");
-                            Log.w("Body", str);
-                        } catch (UnsupportedEncodingException e) {
-                            e.printStackTrace();
+                        if (responseBody != null) {
+                            Log.w("AF", new String(responseBody));
                         }
                         Utils.shortToast(mContext, "Server Error: Couldn't add user");
                         updateUI("", "", false);
