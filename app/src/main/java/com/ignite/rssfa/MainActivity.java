@@ -103,10 +103,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private void updateUserStatus() {
         boolean logged = mSession.isLoggedIn();
         mUserStatus.setText(logged ? mSession.getUserDetails().get(SessionManager.KEY_USERNAME) : getResources().getString(R.string.disconnected));
-        Drawable drawable = getResources().getDrawable(R.drawable.ic_status).mutate();
-        drawable.setColorFilter(getResources().getColor(logged ? R.color.colorDarkGreen : R.color.colorOrange), PorterDuff.Mode.SRC_ATOP);
-
-        mUserStatus.setCompoundDrawables(null, drawable, null, null);
+        mUserStatus.setTextColor(getResources().getColor(logged ? R.color.black : R.color.colorOrange));
 
     }
 }

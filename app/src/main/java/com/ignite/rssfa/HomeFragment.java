@@ -1,9 +1,7 @@
 package com.ignite.rssfa;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,15 +11,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.ignite.rssfa.db.entity.Feed;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -99,8 +92,8 @@ public class HomeFragment extends Fragment {
                         for (int i = 0; i < articles.length(); i++) {
                             JSONObject article = articles.getJSONObject(i);
                             String content = article.get("description").toString();
-                            String desc = content.substring(0, (content.length() > 100) ? 100 : content.length());
-                            RsskeeArticle articleToLoad = new RsskeeArticle(article.get("title").toString(), desc, content, "", "", article.get("author").toString(), article.get("link").toString());
+//                            String desc = content.substring(0, (content.length() > 100) ? 100 : content.length());
+                            RsskeeArticle articleToLoad = new RsskeeArticle(article.get("title").toString(), content, content, "", "", article.get("author").toString(), article.get("link").toString());
                             articleList.add(articleToLoad);
                             ArticleAdapter adapter = new ArticleAdapter(mContext, articleList);
                             mFeedList.setAdapter(adapter);

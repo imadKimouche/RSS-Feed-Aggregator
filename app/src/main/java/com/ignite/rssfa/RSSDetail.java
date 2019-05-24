@@ -3,30 +3,21 @@ package com.ignite.rssfa;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.ignite.rssfa.AlreadyRead;
 import com.ignite.rssfa.db.AlreadyReadViewModel;
 import com.ignite.rssfa.db.FavArticleViewModel;
 import com.ignite.rssfa.db.SavedArticleViewModel;
-
-import java.text.MessageFormat;
-import java.util.Objects;
 
 public class RSSDetail extends AppCompatActivity {
 
@@ -52,9 +43,9 @@ public class RSSDetail extends AppCompatActivity {
         mBackground = findViewById(R.id.background);
         visitWebSite = findViewById(R.id.visitWebSite);
         mDate = findViewById(R.id.date);
-        mTitle.setText(mArticle.getTitle().equals("") ? "No title found" : mArticle.getTitle());
-        mDate.setText(MessageFormat.format("{0}{1}{2}", mArticle.getPubDate(), mArticle.getPubDate().isEmpty() ? " By " : " by ", mArticle.getAuthor()));
-        mContent.setText(mArticle.getContent().equals("") ? "No content found" : mArticle.getContent());
+        mTitle.setText(mArticle.getTitle());
+        mDate.setText(mArticle.getPubDate());
+        mContent.setText(mArticle.getDescription());
         if (mArticle.getImage() != null) {
             if (mArticle.getImage().startsWith("http")) {
                 new Utils.DownloadImageTask(mPicture).execute(mArticle.getImage());
@@ -63,7 +54,7 @@ public class RSSDetail extends AppCompatActivity {
         mFavArticleViewModel = ViewModelProviders.of(this).get(FavArticleViewModel.class);
         mSavedArticleViewModel = ViewModelProviders.of(this).get(SavedArticleViewModel.class);
         mAlreadyReadViewModel = ViewModelProviders.of(this).get(AlreadyReadViewModel.class);
-        AlreadyRead article = new AlreadyRead(mArticle.getUrl());
+        com.ignite.rssfa.AlreadyRead article = new com.ignite.rssfa.AlreadyRead(mArticle.getUrl());
         mAlreadyReadViewModel.insert(article);
 
         visitWebSite.setOnClickListener(v -> {
@@ -107,20 +98,16 @@ public class RSSDetail extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         Boolean result;
         switch (item.getItemId()) {
-/*            case android.R.id.ab_return: {
-                NavUtils.navigateUpFromSameTask(this);
-                return true;
-            }*/
             case R.id.ab_save:
                 RsskeeArticleSaved savedArticle = new RsskeeArticleSaved(mArticle);
                 result = mSavedArticleViewModel.insert(savedArticle);
                 item.setIcon(result ? R.drawable.ic_bookmark_enabled : R.drawable.ic_bookmark);
-                Toast.makeText(this, "Article Saved", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, result ? getString(R.string.article_saved) : getString(R.string.article_removed), Toast.LENGTH_SHORT).show();
                 break;
             case R.id.ab_favorite: {
                 result = mFavArticleViewModel.insert(mArticle);
                 item.setIcon(result ? R.drawable.ic_favorite_enabled : R.drawable.ic_favorite);
-                Toast.makeText(this, result ? "Added Favorite" : "Removed Favorite", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, result ? getString(R.string.added_favorite) : getString(R.string.removed_favorite), Toast.LENGTH_SHORT).show();
                 break;
             }
             case R.id.ab_share: {

@@ -44,6 +44,7 @@ public class FeedDetail extends AppCompatActivity {
         final ProgressDialog progressDialog = new ProgressDialog(FeedDetail.this, R.style.Spinner);
         progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
         progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
         progressDialog.show();
         HttpRequest.getFeed(mFeed.getUid(), token, new AsyncHttpResponseHandler() {
             @Override
@@ -58,30 +59,11 @@ public class FeedDetail extends AppCompatActivity {
                     RsskeeArticle article;
                     for (int i = 0; i < articles.length(); i++) {
                         JSONObject ja = articles.getJSONObject(i);
-                        article = new RsskeeArticle(ja.get("title").toString(), ja.get("description").toString(), "", "", "", ja.get("author").toString(), ja.get("link").toString());
+                        article = new RsskeeArticle(ja.getString("title"), ja.get("description").toString(), "", ja.getString("image"), ja.getString("pubdate"), ja.get("author").toString(), ja.get("link").toString());
                         mArticles.add(article);
                     }
-                    Parser parser = new Parser();
-                    parser.onFinish(new OnTaskCompleted() {
-
-                        @Override
-                        public void onTaskCompleted(List<Article> list) {
-                            for (int j = 0; j < list.size(); j++) {
-                                mArticles.get(j).setImage(list.get(j).getImage());
-                            }
-                            new Handler(Looper.getMainLooper()).post(() -> {
-                                adapter.notifyDataSetChanged();
-                                progressDialog.dismiss();
-                            });
-                        }
-
-                        @Override
-                        public void onError(Exception e) {
-                            Log.i("error parsing feed", e.getMessage());
-                            progressDialog.dismiss();
-                        }
-                    });
-                    parser.execute(mFeed.getRssUrl());
+                    adapter.notifyDataSetChanged();
+                    progressDialog.dismiss();
                 } catch (JSONException e) {
                     progressDialog.dismiss();
                     e.printStackTrace();

@@ -53,13 +53,13 @@ public class SavedArticleAdapter extends ArrayAdapter<RsskeeArticleSaved> {
 
         RsskeeArticleSaved article = getItem(position);
         viewHolder.title.setText(article.getTitle());
-        viewHolder.description.setText(article.getDescription());
+        viewHolder.description.setText(String.format("%s %s / %s", mContext.getString(R.string.by), article.getAuthor(), Utils.dateDiff(mContext, article.getPubDate())));
         boolean alreadyRead = mAlreadyReadViewModel.exists(new com.ignite.rssfa.AlreadyRead(article.getUrl()));
         viewHolder.title.setTextColor(alreadyRead ?
-                convertView.getResources().getColor(R.color.common_google_signin_btn_text_light) :
+                convertView.getResources().getColor(R.color.grey) :
                 convertView.getResources().getColor(R.color.black));
         viewHolder.description.setTextColor(alreadyRead ?
-                convertView.getResources().getColor(R.color.common_google_signin_btn_text_light) :
+                convertView.getResources().getColor(R.color.grey) :
                 convertView.getResources().getColor(R.color.black));
         if (article.getImage() != null) {
             if (article.getImage().startsWith("http")) {

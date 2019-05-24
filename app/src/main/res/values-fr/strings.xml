@@ -53,6 +53,12 @@
     <string name="create_account">Créer un compte</string>
     <string name="already_a_member_login">Déjà membre? S\'identifier</string>
     <string name="name">Nom d\'utilisateur</string>
+    <string name="by">par</string>
+    <string name="days_abv">j</string>
+    <string name="year_abv">a</string>
+    <string name="removed_favorite">Favori supprimé</string>
+    <string name="article_saved">Article enregistré</string>
+    <string name="article_removed">Article supprimé</string>
 
 
 </resources>

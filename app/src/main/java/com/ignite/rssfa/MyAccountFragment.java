@@ -110,6 +110,7 @@ public class MyAccountFragment extends Fragment {
             final ProgressDialog progressDialog = new ProgressDialog(mContext,
                     R.style.MyDialogTheme);
             progressDialog.setIndeterminate(true);
+            progressDialog.setCancelable(false);
             progressDialog.setMessage(getString(R.string.authentificating));
             progressDialog.show();
 
@@ -249,6 +250,7 @@ public class MyAccountFragment extends Fragment {
         final ProgressDialog progressDialog = new ProgressDialog(mContext,
                 R.style.MyDialogTheme);
         progressDialog.setIndeterminate(true);
+        progressDialog.setCancelable(false);
         progressDialog.setMessage(getString(R.string.authentificating));
         progressDialog.show();
         HttpRequest.login(name, token.substring(0, 15), new AsyncHttpResponseHandler() {

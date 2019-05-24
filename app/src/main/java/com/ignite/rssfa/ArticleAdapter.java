@@ -5,24 +5,20 @@ import android.app.AlertDialog;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.text.InputType;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.ignite.rssfa.AlreadyRead;
 import com.ignite.rssfa.db.AlreadyReadViewModel;
 import com.ignite.rssfa.db.FavArticleViewModel;
 import com.ignite.rssfa.db.SavedArticleViewModel;
+
+import com.ignite.rssfa.AlreadyRead;
 
 import java.util.List;
 
@@ -62,13 +58,14 @@ public class ArticleAdapter extends ArrayAdapter<RsskeeArticle> {
         RsskeeArticle article = getItem(position);
         assert article != null;
         viewHolder.title.setText(article.getTitle());
-        viewHolder.description.setText(article.getDescription());
+
+        viewHolder.description.setText(String.format("%s %s / %s", mContext.getString(R.string.by), article.getAuthor(), Utils.dateDiff(mContext, article.getPubDate())));
         boolean alreadyRead = mAlreadyReadViewModel.exists(new AlreadyRead(article.getUrl()));
         viewHolder.title.setTextColor(alreadyRead ?
-                convertView.getResources().getColor(R.color.common_google_signin_btn_text_light) :
+                convertView.getResources().getColor(R.color.grey) :
                 convertView.getResources().getColor(R.color.black));
         viewHolder.description.setTextColor(alreadyRead ?
-                convertView.getResources().getColor(R.color.common_google_signin_btn_text_light) :
+                convertView.getResources().getColor(R.color.grey) :
                 convertView.getResources().getColor(R.color.black));
         if (article.getImage() != null) {
             if (article.getImage().startsWith("http")) {
@@ -110,8 +107,8 @@ public class ArticleAdapter extends ArrayAdapter<RsskeeArticle> {
 
         ArticleViewHolder finalViewHolder = viewHolder;
         convertView.setOnClickListener(v -> {
-            finalViewHolder.title.setTextColor(v.getResources().getColor(R.color.common_google_signin_btn_text_light));
-            finalViewHolder.description.setTextColor(v.getResources().getColor(R.color.common_google_signin_btn_text_light));
+            finalViewHolder.title.setTextColor(v.getResources().getColor(R.color.grey));
+            finalViewHolder.description.setTextColor(v.getResources().getColor(R.color.grey));
             openRSSDetail(article);
         });
 

@@ -5,8 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -21,9 +19,6 @@ import android.widget.ListView;
 
 import com.ignite.rssfa.db.entity.Feed;
 import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.prof.rssparser.Article;
-import com.prof.rssparser.OnTaskCompleted;
-import com.prof.rssparser.Parser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -65,6 +60,7 @@ public class MyFeedsFragment extends Fragment {
             if (Utils.isNetworkAvailable(mContext) && sessionManager.checkLogin()) {
                 final ProgressDialog progressDialog = new ProgressDialog(mContext, R.style.Spinner);
                 progressDialog.setProgressStyle(android.R.style.Widget_ProgressBar_Small);
+                progressDialog.setCancelable(false);
                 progressDialog.setIndeterminate(true);
                 progressDialog.show();
 
@@ -79,37 +75,13 @@ public class MyFeedsFragment extends Fragment {
                                 Feed feed = new Feed(feedObj.getInt("id"), feedObj.get("title").toString(), feedObj.get("link").toString(),
                                         feedObj.get("description").toString(), feedObj.get("language").toString(),
                                         feedObj.get("pubDate").toString(), feedObj.get("rssURL").toString(), "", new ArrayList<>());
-                                Parser parser = new Parser();
-                                parser.onFinish(new OnTaskCompleted() {
-
-                                    @Override
-                                    public void onTaskCompleted(List<Article> list) {
-                                        String image;
-                                        for (int j = 0; j < list.size(); j++) {
-                                            image = list.get(j).getImage();
-                                            if (image != null) {
-                                                feed.setImage(image);
-                                                break;
-                                            }
-                                        }
-                                        new Handler(Looper.getMainLooper()).post(() -> {
-                                            adapter.addFeed(feed);
-                                            adapter.notifyDataSetChanged();
-                                            progressDialog.dismiss();
-                                        });
-                                    }
-
-                                    //what to do in case of error
-                                    @Override
-                                    public void onError(Exception e) {
-                                        Log.i("error parsing feed", e.getMessage());
-                                        progressDialog.dismiss();
-                                    }
-                                });
-                                parser.execute(feed.getRssUrl());
+                                adapter.addFeed(feed);
+                                adapter.notifyDataSetChanged();
+                                progressDialog.dismiss();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
+                            progressDialog.dismiss();
                         }
                     }
 
@@ -191,34 +163,9 @@ public class MyFeedsFragment extends Fragment {
                                 Feed feed = new Feed(feedObj.getInt("id"), feedObj.get("title").toString(), feedObj.get("link").toString(),
                                         feedObj.get("description").toString(), feedObj.get("language").toString(),
                                         feedObj.get("pubDate").toString(), feedObj.get("rssURL").toString(), "", new ArrayList<>());
-
-                                Parser parser = new Parser();
-                                parser.onFinish(new OnTaskCompleted() {
-
-                                    @Override
-                                    public void onTaskCompleted(List<Article> list) {
-                                        String image;
-                                        for (int j = 0; j < list.size(); j++) {
-                                            image = list.get(j).getImage();
-                                            if (image != null) {
-                                                feed.setImage(image);
-                                                break;
-                                            }
-                                        }
-                                        new Handler(Looper.getMainLooper()).post(() -> {
-                                            adapter.addFeed(feed);
-                                            adapter.notifyDataSetChanged();
-                                            progressDialog.dismiss();
-                                        });
-                                    }
-
-                                    //what to do in case of error
-                                    @Override
-                                    public void onError(Exception e) {
-                                        Log.i("error parsing feed", e.getMessage());
-                                    }
-                                });
-                                parser.execute(feed.getRssUrl());
+                                adapter.addFeed(feed);
+                                adapter.notifyDataSetChanged();
+                                progressDialog.dismiss();
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

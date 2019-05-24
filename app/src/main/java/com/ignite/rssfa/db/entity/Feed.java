@@ -4,12 +4,9 @@ import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverters;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
 
-import com.ignite.rssfa.Converters;
 import com.ignite.rssfa.RsskeeArticle;
 import com.prof.rssparser.Article;
 

@@ -1,8 +1,8 @@
 apply plugin: 'com.android.application'
 
 ext.versionMajor = 0
-ext.versionMinor = 0
-ext.versionPatch = 0
+ext.versionMinor = 1
+ext.versionPatch = 2
 ext.versionClassifier = null
 ext.isSnapshot = true
 ext.minimumSdkVersion = 15
@@ -13,8 +13,8 @@ android {
         applicationId "com.ignite.rssfa"
         targetSdkVersion 28
         minSdkVersion project.ext.minimumSdkVersion
-        versionCode generateVersionCode() // 190010203
-        versionName generateVersionName() // 1.2.3-SNAPSHOT
+        versionCode generateVersionCode()
+        versionName generateVersionName()
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         javaCompileOptions {
             annotationProcessorOptions {
@@ -84,4 +84,5 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:5.0.1'
     implementation 'com.prof.rssparser:rssparser:2.0.4'
     implementation 'com.squareup.picasso:picasso:2.71828'
+    implementation 'net.danlew:android.joda:2.10.1.2'
 }

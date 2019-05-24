@@ -58,5 +58,11 @@
     <string name="create_account">Create Account</string>
     <string name="already_a_member_login">Already a member? Login</string>
     <string name="name">Name</string>
+    <string name="by">by</string>
+    <string name="year_abv">y</string>
+    <string name="days_abv">d</string>
+    <string name="removed_favorite">Removed Favorite</string>
+    <string name="article_saved">Article Saved</string>
+    <string name="article_removed">Article removed</string>
 
 </resources>
